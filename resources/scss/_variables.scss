@@ -1,0 +1,31 @@
+@use "bulma/sass/utilities/mixins";
+@use "bulma/sass/utilities/initial-variables" as vars;
+
+:root {
+    // colors
+    --zbv-primary: #17023a;
+    --zbv-secondary: #ec008c;
+
+    // sizing
+    --max-width: 1440px;
+    --header-top-height: 0px;
+    --header-menu-height: 110px;
+    --header-height: calc(var(--header-top-height) + var(--header-menu-height));
+    --base-gap: #{vars.$gap};
+    --base-small-gap: calc(var(--base-gap) * 0.5);
+    --base-container-padding: 1rem;
+    --header-height: calc(var(--header-top-height) + var(--header-menu-height));
+
+    // admin
+    --admin-vertical-padding: 1.5rem;
+    --admin-horizontal-padding: 1.7rem;
+    --admin-side-bar-width: 0;
+    --admin-navbar-top-height: 65px;
+
+    @include mixins.desktop {
+        --header-top-height: 50px;
+        --header-menu-height: 110px;
+        --base-container-padding: 2rem;
+        --admin-side-bar-width: 15vw;
+    }
+}

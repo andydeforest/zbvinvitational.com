@@ -1,0 +1,89 @@
+@use "bulma/sass/utilities/mixins";
+
+.primary-overlay {
+    position: relative;
+    z-index: 1;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        inset: 0;
+        height: 100%;
+        width: 100%;
+        background-color: var(--zbv-primary);
+        opacity: 0.5;
+        z-index: 1;
+    }
+}
+
+.copy-and-image-1,
+.copy-and-image-2 {
+    display: flex;
+    gap: var(--base-gap);
+
+    p {
+        margin-bottom: 0;
+    }
+}
+
+.copy-and-image-1,
+.copy-and-image-2 {
+    flex-direction: column;
+
+    > div:first-of-type {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        flex: 1;
+    }
+
+    > div:last-of-type {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        @include mixins.desktop {
+            width: 30%;
+        }
+
+        img {
+            object-fit: cover;
+        }
+    }
+}
+
+.copy-and-image-1 {
+    @include mixins.desktop {
+        flex-direction: row;
+    }
+}
+
+.copy-and-image-2 {
+    @include mixins.desktop {
+        flex-direction: row-reverse;
+    }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition:
+    opacity 500ms cubic-bezier(.4, 0, .2, 1),
+    transform 500ms cubic-bezier(.4, 0, .2, 1);
+  will-change: opacity, transform;
+}
+
+/* start hidden & slightly offset */
+.fade-enter-from,
+.fade-leave-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* end fully visible & back in place */
+.fade-enter-to,
+.fade-leave-to {
+  opacity: 1;
+  transform: translateY(0);
+}

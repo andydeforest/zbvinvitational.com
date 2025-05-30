@@ -1,0 +1,17 @@
+includes:
+  - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+  level: 5
+  paths:
+    - app
+  excludePaths:
+    - tests
+    - vendor
+    - database
+  checkMissingVarTagTypehint: true
+  checkUnionTypes: true
+  checkExplicitMixed: true
+  checkPhpDocMissingReturn: false
+  scanFiles:
+    - bootstrap/app.php
