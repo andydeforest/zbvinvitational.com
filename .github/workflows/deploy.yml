@@ -137,10 +137,9 @@ jobs:
               sudo chown deploy:www-data storage/logs/laravel.log
               sudo chmod 664 storage/logs/laravel.log
 
-              php artisan key:generate
               composer install --no-dev --optimize-autoloader --no-interaction
               php artisan migrate
-
+              php artisan key:generate
             else
               # ────────────────────────────────────────────────────
               # 7B) Production environment: write /var/www/zbv-prod/.env
@@ -179,8 +178,8 @@ jobs:
               echo "STRIPE_SECRET=${{ secrets.STRIPE_SECRET_PROD }}"                     >> .env
               echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}"     >> .env
 
-              php artisan key:generate --force
               composer install --no-dev --optimize-autoloader --no-interaction
+              php artisan key:generate --force
               php artisan migrate --env=production --force
               php artisan storage:link
               php artisan config:cache
