@@ -24,9 +24,3 @@ Route::prefix('contact')->group(function () {
 });
 
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle'])->withoutMiddleware([VerifyCsrfToken::class]);
-
-Route::get('/mailable', function () {
-    $order = App\Models\Order::find(59);
-
-    return new App\Mail\OrderReceipt($order);
-});

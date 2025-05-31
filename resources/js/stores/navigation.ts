@@ -24,10 +24,12 @@ export const useNavStore = defineStore('nav', {
         href: '/donors',
         label: 'Donors'
       },
+      /*
       {
         href: '/faq',
         label: 'FAQ'
       },
+      */
       {
         href: '/contact',
         label: 'Contact'
