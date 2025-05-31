@@ -67,7 +67,7 @@ jobs:
       # 6) Sync code to Lightsail via rsync over SSH
       # ────────────────────────────────────────────────────
       - name: Sync to Lightsail via rsync
-        uses: burnett01/rsync-deployments@v4
+        uses: burnett01/rsync-deployments@7.0.2
         with:
           switches: -avzr --delete --exclude='.git/' --exclude='node_modules/' --exclude='vendor/' --exclude='storage/app/public/*'
           path: '.'
