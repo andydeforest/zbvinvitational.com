@@ -6,7 +6,7 @@
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" sizes="any" />
     <title inertia>{{ config('app.name', 'The Zeke Bondy-Villa Invitational Golf Tournament') }}</title>
     @routes
-    @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
+    @vite(['resources/js/app.ts', "resources/js/Pages/{$page['component']}.vue"])
     @inertiaHead
 </head>
 
