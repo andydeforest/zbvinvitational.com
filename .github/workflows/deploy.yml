@@ -93,37 +93,37 @@ jobs:
               # 7A) Dev environment: write /var/www/zbv-dev/.env
               # ────────────────────────────────────────────────────
               cat <<EOF > .env
-APP_NAME="ZBV (Dev)"
-APP_ENV=dev
-APP_KEY=
-APP_DEBUG=true
-APP_URL=http://dev.zbvinvitational.com
+              APP_NAME="ZBV (Dev)"
+              APP_ENV=dev
+              APP_KEY=
+              APP_DEBUG=true
+              APP_URL=http://dev.zbvinvitational.com
 
-LOG_CHANNEL=stack
+              LOG_CHANNEL=stack
 
-DB_CONNECTION=pgsql
-DB_HOST=127.0.0.1
-DB_PORT=5432
-DB_DATABASE=${{ secrets.DB_DEV_NAME }}
-DB_USERNAME=${{ secrets.DB_DEV_USER }}
-DB_PASSWORD=${{ secrets.DB_DEV_PASSWORD }}
+              DB_CONNECTION=pgsql
+              DB_HOST=127.0.0.1
+              DB_PORT=5432
+              DB_DATABASE=${{ secrets.DB_DEV_NAME }}
+              DB_USERNAME=${{ secrets.DB_DEV_USER }}
+              DB_PASSWORD=${{ secrets.DB_DEV_PASSWORD }}
 
-# (any other dev-specific keys:)
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.mailgun.org
-MAIL_PORT=587
-MAIL_USERNAME=${{ secrets.MAILGUN_USERNAME_DEV }}
-MAIL_PASSWORD=${{ secrets.MAILGUN_PASSWORD_DEV }}
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS="${{ secrets.MAIL_FROM_DEV }}"
-MAIL_FROM_NAME="${{ secrets.MAIL_FROM_NAME_DEV }}"
-MAIL_TO_ADDRESS=${{ secrets.MAIL_TO_ADDRESS_DEV }}
-MAIL_TO_NAME="${{ secrets.MAIL_TO_NAME_DEV }}"
+              # (any other dev-specific keys:)
+              MAIL_MAILER=smtp
+              MAIL_HOST=smtp.mailgun.org
+              MAIL_PORT=587
+              MAIL_USERNAME=${{ secrets.MAILGUN_USERNAME_DEV }}
+              MAIL_PASSWORD=${{ secrets.MAILGUN_PASSWORD_DEV }}
+              MAIL_ENCRYPTION=tls
+              MAIL_FROM_ADDRESS="${{ secrets.MAIL_FROM_DEV }}"
+              MAIL_FROM_NAME="${{ secrets.MAIL_FROM_NAME_DEV }}"
+              MAIL_TO_ADDRESS=${{ secrets.MAIL_TO_ADDRESS_DEV }}
+              MAIL_TO_NAME="${{ secrets.MAIL_TO_NAME_DEV }}"
 
-VITE_STRIPE_PUBLIC_KEY=${{ secrets.VITE_STRIPE_PUBLIC_KEY_DEV }}
-STRIPE_SECRET=${{ secrets.STRIPE_SECRET_DEV }}
-STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_DEV }}
-EOF
+              VITE_STRIPE_PUBLIC_KEY=${{ secrets.VITE_STRIPE_PUBLIC_KEY_DEV }}
+              STRIPE_SECRET=${{ secrets.STRIPE_SECRET_DEV }}
+              STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_DEV }}
+              EOF
 
               # 7A-continued) Run dev-specific composer/migrations (no caching)
               composer install --no-dev --optimize-autoloader --no-interaction
@@ -135,37 +135,37 @@ EOF
               # 7B) Production environment: write /var/www/zbv-prod/.env
               # ────────────────────────────────────────────────────
               cat <<EOF > .env
-APP_NAME="ZBV"
-APP_ENV=production
-APP_KEY=
-APP_DEBUG=false
-APP_URL=https://zbvinvitational.com
+              APP_NAME="ZBV"
+              APP_ENV=production
+              APP_KEY=
+              APP_DEBUG=false
+              APP_URL=https://zbvinvitational.com
 
-LOG_CHANNEL=stack
+              LOG_CHANNEL=stack
 
-DB_CONNECTION=pgsql
-DB_HOST=127.0.0.1
-DB_PORT=5432
-DB_DATABASE=${{ secrets.DB_PROD_NAME }}
-DB_USERNAME=${{ secrets.DB_PROD_USER }}
-DB_PASSWORD=${{ secrets.DB_PROD_PASSWORD }}
+              DB_CONNECTION=pgsql
+              DB_HOST=127.0.0.1
+              DB_PORT=5432
+              DB_DATABASE=${{ secrets.DB_PROD_NAME }}
+              DB_USERNAME=${{ secrets.DB_PROD_USER }}
+              DB_PASSWORD=${{ secrets.DB_PROD_PASSWORD }}
 
-# (Production mail)
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.mailgun.org
-MAIL_PORT=587
-MAIL_USERNAME=${{ secrets.MAILGUN_USERNAME_PROD }}
-MAIL_PASSWORD=${{ secrets.MAILGUN_PASSWORD_PROD }}
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS="${{ secrets.MAIL_FROM_PROD }}"
-MAIL_FROM_NAME="${{ secrets.MAIL_FROM_NAME_PROD }}"
-MAIL_TO_ADDRESS=${{ secrets.MAIL_TO_ADDRESS_PROD }}
-MAIL_TO_NAME="${{ secrets.MAIL_TO_NAME_PROD }}"
+              # (Production mail)
+              MAIL_MAILER=smtp
+              MAIL_HOST=smtp.mailgun.org
+              MAIL_PORT=587
+              MAIL_USERNAME=${{ secrets.MAILGUN_USERNAME_PROD }}
+              MAIL_PASSWORD=${{ secrets.MAILGUN_PASSWORD_PROD }}
+              MAIL_ENCRYPTION=tls
+              MAIL_FROM_ADDRESS="${{ secrets.MAIL_FROM_PROD }}"
+              MAIL_FROM_NAME="${{ secrets.MAIL_FROM_NAME_PROD }}"
+              MAIL_TO_ADDRESS=${{ secrets.MAIL_TO_ADDRESS_PROD }}
+              MAIL_TO_NAME="${{ secrets.MAIL_TO_NAME_PROD }}"
 
-VITE_STRIPE_PUBLIC_KEY=${{ secrets.VITE_STRIPE_PUBLIC_KEY_PROD }}
-STRIPE_SECRET=${{ secrets.STRIPE_SECRET_PROD }}
-STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}
-EOF
+              VITE_STRIPE_PUBLIC_KEY=${{ secrets.VITE_STRIPE_PUBLIC_KEY_PROD }}
+              STRIPE_SECRET=${{ secrets.STRIPE_SECRET_PROD }}
+              STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}
+              EOF
 
               # 7B-continued) Composer install, migrations, and caching
               composer install --no-dev --optimize-autoloader --no-interaction
