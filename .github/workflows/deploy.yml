@@ -137,9 +137,9 @@ jobs:
               echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_DEV }}"     >> .env
 
               # 7A-continued) Run dev-specific composer/migrations
-              php artisan key:generate --force
+              php artisan key:generate
               composer install --no-dev --optimize-autoloader --no-interaction
-              php artisan migrate --env=dev --force
+              php artisan migrate
 
             else
               # ────────────────────────────────────────────────────
