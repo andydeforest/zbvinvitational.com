@@ -69,7 +69,7 @@ jobs:
       - name: Sync to Lightsail via rsync
         uses: burnett01/rsync-deployments@7.0.2
         with:
-          switches: "-azr --no-o --no-g --delete --exclude='.git/' --exclude='node_modules/' --exclude='vendor/' --exclude='storage/app/public/*'"
+          switches: -avzr --delete --exclude='.git/' --exclude='node_modules/' --exclude='vendor/' --exclude='storage/app/public/*'
           path: '.'
           remote_host: ${{ secrets.LIGHTSAIL_HOST }}
           remote_user: ${{ secrets.LIGHTSAIL_USER }}
@@ -126,14 +126,7 @@ jobs:
               echo "STRIPE_SECRET=${{ secrets.STRIPE_SECRET_DEV }}"                     >> .env
               echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_DEV }}"     >> .env
 
-              sudo chown -R www-data:www-data storage
-              sudo chown -R www-data:www-data bootstrap/cache
-
-              # Optionally, ensure group‐write:
-              sudo chmod -R 775 storage
-              sudo chmod -R 775 bootstrap/cache
-
-
+              # 7A-continued) Run dev-specific composer/migrations
               php artisan key:generate --force
               composer install --no-dev --optimize-autoloader --no-interaction
               php artisan migrate --env=dev --force
@@ -175,13 +168,6 @@ jobs:
               echo "VITE_STRIPE_PUBLIC_KEY=${{ secrets.VITE_STRIPE_PUBLIC_KEY_PROD }}" >> .env
               echo "STRIPE_SECRET=${{ secrets.STRIPE_SECRET_PROD }}"                     >> .env
               echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}"     >> .env
-
-              sudo chown -R www-data:www-data storage
-              sudo chown -R www-data:www-data bootstrap/cache
-
-              # Optionally, ensure group‐write:
-              sudo chmod -R 775 storage
-              sudo chmod -R 775 bootstrap/cache
 
               # 7B-continued) Run prod-specific composer/migrations & caching
               php artisan key:generate --force
