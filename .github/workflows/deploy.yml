@@ -1,0 +1,182 @@
+name: Deploy ZBV to Lightsail
+
+# Trigger on push to dev or main
+on:
+  push:
+    branches:
+      - dev
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ────────────────────────────────────────────────────
+      # 1) Checkout code
+      # ────────────────────────────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ────────────────────────────────────────────────────
+      # 2) Determine environment: dev vs prod
+      # ────────────────────────────────────────────────────
+      - name: Set environment variables
+        id: env-vars
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == "dev" ]]; then
+            echo "ENV=dev" >> $GITHUB_OUTPUT
+            echo "TARGET_DIR=/var/www/zbv-dev" >> $GITHUB_OUTPUT
+          else
+            echo "ENV=prod" >> $GITHUB_OUTPUT
+            echo "TARGET_DIR=/var/www/zbv-prod" >> $GITHUB_OUTPUT
+          fi
+
+      # ────────────────────────────────────────────────────
+      # 3) Set up PHP 8.4 and Composer
+      # ────────────────────────────────────────────────────
+      - name: Setup PHP & Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: mbstring, pgsql, xml, bcmath, zip
+
+      # ────────────────────────────────────────────────────
+      # 4) Install Composer dependencies
+      # ────────────────────────────────────────────────────
+      - name: Install Composer dependencies
+        run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader --no-interaction
+
+      # ────────────────────────────────────────────────────
+      # 5) Set up Node.js 20 & build front-end assets
+      # ────────────────────────────────────────────────────
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install NPM packages
+        run: npm ci
+
+      - name: Build front-end assets
+        run: npm run build
+
+      # ────────────────────────────────────────────────────
+      # 6) Sync code to Lightsail via rsync over SSH
+      # ────────────────────────────────────────────────────
+      - name: Sync to Lightsail via rsync
+        uses: burnett01/rsync-deployments@v4
+        with:
+          switches: -avzr --delete --exclude='.git/' --exclude='node_modules/' --exclude='vendor/' --exclude='storage/app/public/*'
+          path: '.'
+          remote_host: ${{ secrets.LIGHTSAIL_HOST }}
+          remote_user: ${{ secrets.LIGHTSAIL_USER }}
+          remote_key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          remote_path: ${{ steps.env-vars.outputs.TARGET_DIR }}
+
+      # ────────────────────────────────────────────────────
+      # 7) SSH in and build the real .env from secrets, then migrate/cache
+      # ────────────────────────────────────────────────────
+      - name: Build .env and deploy on server
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.LIGHTSAIL_HOST }}
+          username: ${{ secrets.LIGHTSAIL_USER }}
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          script: |
+            cd ${{ steps.env-vars.outputs.TARGET_DIR }}
+
+            if [ "${{ steps.env-vars.outputs.ENV }}" = "dev" ]; then
+              # ────────────────────────────────────────────────────
+              # 7A) Dev environment: write /var/www/zbv-dev/.env
+              # ────────────────────────────────────────────────────
+              cat <<EOF > .env
+APP_NAME="ZBV (Dev)"
+APP_ENV=dev
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://dev.zbvinvitational.com
+
+LOG_CHANNEL=stack
+
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=${{ secrets.DB_DEV_NAME }}
+DB_USERNAME=${{ secrets.DB_DEV_USER }}
+DB_PASSWORD=${{ secrets.DB_DEV_PASSWORD }}
+
+# (any other dev-specific keys:)
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailgun.org
+MAIL_PORT=587
+MAIL_USERNAME=${{ secrets.MAILGUN_USERNAME_DEV }}
+MAIL_PASSWORD=${{ secrets.MAILGUN_PASSWORD_DEV }}
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="${{ secrets.MAIL_FROM_DEV }}"
+MAIL_FROM_NAME="${{ secrets.MAIL_FROM_NAME_DEV }}"
+MAIL_TO_ADDRESS=${{ secrets.MAIL_TO_ADDRESS_DEV }}
+MAIL_TO_NAME="${{ secrets.MAIL_TO_NAME_DEV }}"
+
+VITE_STRIPE_PUBLIC_KEY=${{ secrets.VITE_STRIPE_PUBLIC_KEY_DEV }}
+STRIPE_SECRET=${{ secrets.STRIPE_SECRET_DEV }}
+STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_DEV }}
+EOF
+
+              # 7A-continued) Run dev-specific composer/migrations (no caching)
+              composer install --no-dev --optimize-autoloader --no-interaction
+              php artisan key:generate --force
+              php artisan migrate --env=dev --force
+
+            else
+              # ────────────────────────────────────────────────────
+              # 7B) Production environment: write /var/www/zbv-prod/.env
+              # ────────────────────────────────────────────────────
+              cat <<EOF > .env
+APP_NAME="ZBV"
+APP_ENV=production
+APP_KEY=
+APP_DEBUG=false
+APP_URL=https://zbvinvitational.com
+
+LOG_CHANNEL=stack
+
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=${{ secrets.DB_PROD_NAME }}
+DB_USERNAME=${{ secrets.DB_PROD_USER }}
+DB_PASSWORD=${{ secrets.DB_PROD_PASSWORD }}
+
+# (Production mail)
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailgun.org
+MAIL_PORT=587
+MAIL_USERNAME=${{ secrets.MAILGUN_USERNAME_PROD }}
+MAIL_PASSWORD=${{ secrets.MAILGUN_PASSWORD_PROD }}
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="${{ secrets.MAIL_FROM_PROD }}"
+MAIL_FROM_NAME="${{ secrets.MAIL_FROM_NAME_PROD }}"
+MAIL_TO_ADDRESS=${{ secrets.MAIL_TO_ADDRESS_PROD }}
+MAIL_TO_NAME="${{ secrets.MAIL_TO_NAME_PROD }}"
+
+VITE_STRIPE_PUBLIC_KEY=${{ secrets.VITE_STRIPE_PUBLIC_KEY_PROD }}
+STRIPE_SECRET=${{ secrets.STRIPE_SECRET_PROD }}
+STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}
+EOF
+
+              # 7B-continued) Composer install, migrations, and caching
+              composer install --no-dev --optimize-autoloader --no-interaction
+              php artisan key:generate --force
+              php artisan migrate --env=production --force
+              php artisan storage:link
+              php artisan config:cache
+              php artisan route:cache
+              php artisan view:cache
+            fi
+
+            # 8) Fix permissions on storage & bootstrap/cache
+            chown -R deploy:www-data .env storage bootstrap/cache
+            chmod -R 775 storage bootstrap/cache
