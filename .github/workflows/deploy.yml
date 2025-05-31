@@ -88,7 +88,15 @@ jobs:
           script: |
             cd ${{ steps.env-vars.outputs.TARGET_DIR }}
             sudo chown -R deploy:www-data storage bootstrap/cache
-            sudo chmod -R 775 storage bootstrap/cache
+            sudo find storage -type d -exec chmod 775 {} \;
+            sudo find storage -type f -exec chmod 664 {} \;
+
+            sudo find bootstrap/cache -type d -exec chmod 775 {} \;
+            sudo find bootstrap/cache -type f -exec chmod 664 {} \;
+
+            sudo touch storage/logs/laravel.log
+            sudo chown deploy:www-data storage/logs/laravel.log
+            sudo chmod 664 storage/logs/laravel.log
 
             if [ "${{ steps.env-vars.outputs.ENV }}" = "dev" ]; then
               # ────────────────────────────────────────────────────
