@@ -87,16 +87,6 @@ jobs:
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
           script: |
             cd ${{ steps.env-vars.outputs.TARGET_DIR }}
-            sudo chown -R deploy:www-data storage bootstrap/cache
-            sudo find storage -type d -exec chmod 775 {} \;
-            sudo find storage -type f -exec chmod 664 {} \;
-
-            sudo find bootstrap/cache -type d -exec chmod 775 {} \;
-            sudo find bootstrap/cache -type f -exec chmod 664 {} \;
-
-            sudo touch storage/logs/laravel.log
-            sudo chown deploy:www-data storage/logs/laravel.log
-            sudo chmod 664 storage/logs/laravel.log
 
             if [ "${{ steps.env-vars.outputs.ENV }}" = "dev" ]; then
               # ────────────────────────────────────────────────────
@@ -136,7 +126,17 @@ jobs:
               echo "STRIPE_SECRET=${{ secrets.STRIPE_SECRET_DEV }}"                     >> .env
               echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_DEV }}"     >> .env
 
-              # 7A-continued) Run dev-specific composer/migrations
+              sudo chown -R deploy:www-data storage bootstrap/cache
+              sudo find storage -type d -exec chmod 775 {} \;
+              sudo find storage -type f -exec chmod 664 {} \;
+
+              sudo find bootstrap/cache -type d -exec chmod 775 {} \;
+              sudo find bootstrap/cache -type f -exec chmod 664 {} \;
+
+              sudo touch storage/logs/laravel.log
+              sudo chown deploy:www-data storage/logs/laravel.log
+              sudo chmod 664 storage/logs/laravel.log
+
               php artisan key:generate
               composer install --no-dev --optimize-autoloader --no-interaction
               php artisan migrate
@@ -179,7 +179,6 @@ jobs:
               echo "STRIPE_SECRET=${{ secrets.STRIPE_SECRET_PROD }}"                     >> .env
               echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}"     >> .env
 
-              # 7B-continued) Run prod-specific composer/migrations & caching
               php artisan key:generate --force
               composer install --no-dev --optimize-autoloader --no-interaction
               php artisan migrate --env=production --force
@@ -188,7 +187,3 @@ jobs:
               php artisan route:cache
               php artisan view:cache
             fi
-
-            # 8) Fix permissions on storage & bootstrap/cache
-            chown -R deploy:www-data .env storage bootstrap/cache
-            chmod -R 775 storage bootstrap/cache
