@@ -88,6 +88,7 @@ jobs:
           script: |
             cd ${{ steps.env-vars.outputs.TARGET_DIR }}
             sudo chown -R deploy:www-data storage bootstrap/cache
+            sudo chmod -R 775 storage bootstrap/cache
 
             if [ "${{ steps.env-vars.outputs.ENV }}" = "dev" ]; then
               # ────────────────────────────────────────────────────
