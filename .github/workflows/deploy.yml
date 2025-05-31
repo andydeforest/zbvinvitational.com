@@ -87,6 +87,7 @@ jobs:
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
           script: |
             cd ${{ steps.env-vars.outputs.TARGET_DIR }}
+            sudo chown -R deploy:www-data storage bootstrap/cache
 
             if [ "${{ steps.env-vars.outputs.ENV }}" = "dev" ]; then
               # ────────────────────────────────────────────────────
