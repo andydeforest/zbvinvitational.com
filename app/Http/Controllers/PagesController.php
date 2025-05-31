@@ -42,7 +42,12 @@ class PagesController extends Controller
 
     public function gallery(Request $request)
     {
+        // todo: abstract this logic
         $galleryPath = storage_path('app/public/images/gallery');
+
+        if (! File::isDirectory($galleryPath)) {
+            File::makeDirectory($galleryPath, 0755, true);
+        }
 
         $years = collect(File::directories($galleryPath))
             ->map(fn ($path) => basename($path))

@@ -140,6 +140,7 @@ jobs:
               composer install --no-dev --optimize-autoloader --no-interaction
               php artisan migrate
               php artisan key:generate
+              php artisan storage:link
             else
               # ────────────────────────────────────────────────────
               # 7B) Production environment: write /var/www/zbv-prod/.env
