@@ -34,8 +34,29 @@ jobs:
             echo "TARGET_DIR=/var/www/zbv-prod" >> $GITHUB_OUTPUT
           fi
 
+      # ───────────────────────────────────────────────────────────────────────
+      # 3) Create a build-time .env for Vite
+      #
+      #    We write only the VITE_ variables here so that Vite can pick them up
+      #    when running `npm run build`.
+      # ───────────────────────────────────────────────────────────────────────
+      - name: Create build-time .env
+        run: |
+          # Remove any existing .env to avoid merge/conflict
+          rm -f .env
+
+          if [[ "${{ steps.env-vars.outputs.ENV }}" == "dev" ]]; then
+            # Write VITE_ vars for the dev build
+            echo "VITE_ADMIN_TOKEN=${{ secrets.VITE_ADMIN_TOKEN_DEV }}" >> .env
+            echo "VITE_STRIPE_PUBLIC_KEY=${{ secrets.VITE_STRIPE_PUBLIC_KEY_DEV }}" >> .env
+          else
+            # Write VITE_ vars for the prod build
+            echo "VITE_ADMIN_TOKEN=${{ secrets.VITE_ADMIN_TOKEN_PROD }}" >> .env
+            echo "VITE_STRIPE_PUBLIC_KEY=${{ secrets.VITE_STRIPE_PUBLIC_KEY_PROD }}" >> .env
+          fi
+
       # ────────────────────────────────────────────────────
-      # 3) Set up PHP 8.4 and Composer
+      # 4) Set up PHP 8.4 and Composer
       # ────────────────────────────────────────────────────
       - name: Setup PHP & Composer
         uses: shivammathur/setup-php@v2
@@ -44,13 +65,13 @@ jobs:
           extensions: mbstring, pgsql, xml, bcmath, zip
 
       # ────────────────────────────────────────────────────
-      # 4) Install Composer dependencies
+      # 5) Install Composer dependencies
       # ────────────────────────────────────────────────────
       - name: Install Composer dependencies
         run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader --no-interaction
 
       # ────────────────────────────────────────────────────
-      # 5) Set up Node.js 20 & build front-end assets
+      # 6) Set up Node.js 20 & build front-end assets
       # ────────────────────────────────────────────────────
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
@@ -64,7 +85,7 @@ jobs:
         run: npm run build
 
       # ────────────────────────────────────────────────────
-      # 6) Sync code to Lightsail via rsync over SSH
+      # 7) Sync code to Lightsail via rsync over SSH
       # ────────────────────────────────────────────────────
       - name: Sync to Lightsail via rsync
         uses: burnett01/rsync-deployments@7.0.2
@@ -77,7 +98,7 @@ jobs:
           remote_path: ${{ steps.env-vars.outputs.TARGET_DIR }}
 
       # ────────────────────────────────────────────────────
-      # 7) SSH in and build the real .env from secrets, then migrate/cache
+      # 8) SSH in and build the real .env from secrets, then migrate/cache
       # ────────────────────────────────────────────────────
       - name: Build .env and deploy on server
         uses: appleboy/ssh-action@v0.1.0
@@ -110,9 +131,6 @@ jobs:
               echo "DB_PASSWORD=${{ secrets.DB_DEV_PASSWORD }}" >> .env
               echo ''                             >> .env
 
-              echo "VITE_ADMIN_TOKEN=${{ secrets.VITE_ADMIN_TOKEN_DEV }}"  >> .env
-              echo ''
-
               echo "MEDIA_DISK=${{ secrets.MEDIA_DISK_DEV }}"  >> .env
               echo ''                             >> .env
 
@@ -134,7 +152,6 @@ jobs:
               echo "MAIL_TO_NAME=\"${{ secrets.MAIL_TO_NAME_DEV }}\""     >> .env
               echo ''                             >> .env
 
-              echo "VITE_STRIPE_PUBLIC_KEY=${{ secrets.VITE_STRIPE_PUBLIC_KEY_DEV }}" >> .env
               echo "STRIPE_SECRET=${{ secrets.STRIPE_SECRET_DEV }}"                     >> .env
               echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_DEV }}"     >> .env
 
@@ -175,8 +192,6 @@ jobs:
               echo "DB_PASSWORD=${{ secrets.DB_PROD_PASSWORD }}" >> .env
               echo ''                             >> .env
 
-              echo "VITE_ADMIN_TOKEN=${{ secrets.VITE_ADMIN_TOKEN_PROD }}"  >> .env
-
               echo "MEDIA_DISK=${{ secrets.MEDIA_DISK_PROD }}"  >> .env
 
               echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_PROD }}"  >> .env
@@ -196,7 +211,6 @@ jobs:
               echo "MAIL_TO_NAME=\"${{ secrets.MAIL_TO_NAME_PROD }}\""     >> .env
               echo ''                             >> .env
 
-              echo "VITE_STRIPE_PUBLIC_KEY=${{ secrets.VITE_STRIPE_PUBLIC_KEY_PROD }}" >> .env
               echo "STRIPE_SECRET=${{ secrets.STRIPE_SECRET_PROD }}"                     >> .env
               echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}"     >> .env
 
