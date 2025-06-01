@@ -110,8 +110,8 @@ jobs:
               echo "DB_PASSWORD=${{ secrets.DB_DEV_PASSWORD }}" >> .env
               echo ''                             >> .env
 
-              echo 'MAIL_MAILER=smtp'             >> .env
-              echo 'MAIL_HOST=smtp.mailgun.org'   >> .env
+              echo "MAIL_MAILER=${{ secrets.MAIL_MAILER_DEV }}"  >> .env
+              echo "MAIL_HOST=${{ secrets.MAIL_HOST_DEV }}"   >> .env
               echo 'MAIL_PORT=587'                >> .env
               echo "MAIL_USERNAME=${{ secrets.MAILGUN_USERNAME_DEV }}"   >> .env
               echo "MAIL_PASSWORD=${{ secrets.MAILGUN_PASSWORD_DEV }}"   >> .env
@@ -163,8 +163,8 @@ jobs:
               echo "DB_PASSWORD=${{ secrets.DB_PROD_PASSWORD }}" >> .env
               echo ''                             >> .env
 
-              echo 'MAIL_MAILER=smtp'            >> .env
-              echo 'MAIL_HOST=smtp.mailgun.org'  >> .env
+              echo "MAIL_MAILER=${{ secrets.MAIL_MAILER_PROD }}"  >> .env
+              echo "MAIL_HOST=${{ secrets.MAIL_HOST_PROD }}"   >> .env
               echo 'MAIL_PORT=587'               >> .env
               echo "MAIL_USERNAME=${{ secrets.MAILGUN_USERNAME_PROD }}" >> .env
               echo "MAIL_PASSWORD=${{ secrets.MAILGUN_PASSWORD_PROD }}" >> .env
