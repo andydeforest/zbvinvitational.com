@@ -25,7 +25,7 @@ class DonorLogoControllerTest extends TestCase
     }
 
     #[Test]
-    public function store_creates_logos_and_stores_files()
+    public function store_creates_logos_and_stores_files_on_s3()
     {
         Storage::fake('s3');
 

@@ -110,6 +110,9 @@ jobs:
               echo "DB_PASSWORD=${{ secrets.DB_DEV_PASSWORD }}" >> .env
               echo ''                             >> .env
 
+              echo "VITE_ADMIN_TOKEN=${{ secrets.VITE_ADMIN_TOKEN_DEV }}"  >> .env
+              echo ''
+
               echo "MEDIA_DISK=${{ secrets.MEDIA_DISK_DEV }}"  >> .env
               echo ''                             >> .env
 
@@ -171,6 +174,8 @@ jobs:
               echo "DB_USERNAME=${{ secrets.DB_PROD_USER }}"   >> .env
               echo "DB_PASSWORD=${{ secrets.DB_PROD_PASSWORD }}" >> .env
               echo ''                             >> .env
+
+              echo "VITE_ADMIN_TOKEN=${{ secrets.VITE_ADMIN_TOKEN_PROD }}"  >> .env
 
               echo "MEDIA_DISK=${{ secrets.MEDIA_DISK_PROD }}"  >> .env
 

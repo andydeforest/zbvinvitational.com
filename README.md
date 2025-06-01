@@ -91,6 +91,8 @@ php artisan key:generate
    DB_USERNAME=
    DB_PASSWORD=
 
+   VITE_ADMIN_TOKEN=
+
    STRIPE_KEY=your_stripe_public_key
    STRIPE_SECRET=your_stripe_secret_key
    STRIPE_WEBHOOK_SECRET=your_webhook_secret
