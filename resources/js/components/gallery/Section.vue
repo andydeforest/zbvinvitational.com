@@ -10,18 +10,18 @@
       </div>
       <div class="gallery-section__grid">
         <div>
-          <div v-for="(src, idx) in images" :key="src" class="gallery-section__grid--item">
+          <div v-for="(image, x) in images" :key="`image-thumb-${x}`" class="gallery-section__grid--item">
             <DeferredContent>
-              <div v-if="!loadedImages.includes(src)" class="skeleton-wrapper">
+              <div v-if="!loadedThumbs.includes(image.thumb)" class="skeleton-wrapper">
                 <Skeleton width="100%" height="0" style="padding-bottom: 66.66%" />
               </div>
               <img
-                :src="src"
+                :src="image.thumb"
                 loading="lazy"
-                @load="onImageLoad(src)"
-                @click="openLightbox(idx)"
+                @load="onThumbLoad(image.thumb)"
+                @click="openLightbox(x)"
                 class="gallery-section__grid--image"
-                :class="{ loaded: loadedImages.includes(src) }"
+                :class="{ loaded: loadedThumbs.includes(image.thumb) }"
                 :alt="`Image from ${selectedYear}`"
               />
             </DeferredContent>
@@ -54,35 +54,40 @@
   import Skeleton from 'primevue/skeleton';
   import Galleria from 'primevue/galleria';
 
+  interface ImageEntry {
+    full: string;
+    thumb: string;
+    alt?: string;
+  }
   interface GalleryPageProps extends PageProps {
     years: string[];
-    images: string[];
+    images: ImageEntry[]; // now an array of objects
     activeYear: string;
   }
 
   const page = usePage<GalleryPageProps>();
-  const selectedYear = ref(page.props.activeYear);
+
+  const selectedYear = ref<string>(page.props.activeYear);
   const years = ref<string[]>([]);
-  const images = ref<string[]>([]);
-  const loadedImages = ref<string[]>([]);
-  const loading = ref(false);
+  const images = ref<ImageEntry[]>([]);
+  const loadedThumbs = ref<string[]>([]);
+  const loading = ref<boolean>(false);
 
   const displayLightbox = ref(false);
-
   const activeIndex = ref(0);
 
   const galleryImages = computed(() =>
-    images.value.map((src) => ({
-      itemImageSrc: src,
-      thumbnailImageSrc: src,
-      alt: `Image from ${selectedYear.value}`
+    images.value.map((img) => ({
+      itemImageSrc: img.full,
+      thumbnailImageSrc: img.thumb,
+      alt: img.alt ?? `Image from ${selectedYear.value}`
     }))
   );
 
   watchEffect(() => {
     years.value = page.props.years;
     images.value = page.props.images;
-    loadedImages.value = [];
+    loadedThumbs.value = [];
     selectedYear.value = page.props.activeYear;
   });
 
@@ -101,14 +106,14 @@
     );
   }
 
-  function onImageLoad(src: string) {
-    if (!loadedImages.value.includes(src)) {
-      loadedImages.value.push(src);
+  function onThumbLoad(thumbUrl: string) {
+    if (!loadedThumbs.value.includes(thumbUrl)) {
+      loadedThumbs.value.push(thumbUrl);
     }
   }
 
-  function openLightbox(idx: number) {
-    activeIndex.value = idx;
+  function openLightbox(index: number) {
+    activeIndex.value = index;
     displayLightbox.value = true;
   }
 </script>

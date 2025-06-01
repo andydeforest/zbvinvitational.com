@@ -17,6 +17,7 @@
         "laravel/jetstream": "^5.3",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
+        "league/flysystem-aws-s3-v3": "3.0",
         "robertboes/inertia-breadcrumbs": "^0.8.0",
         "spatie/image": "^3.8",
         "spatie/laravel-medialibrary": "^11.13",

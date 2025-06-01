@@ -110,6 +110,15 @@ jobs:
               echo "DB_PASSWORD=${{ secrets.DB_DEV_PASSWORD }}" >> .env
               echo ''                             >> .env
 
+              echo "MEDIA_DISK=${{ secrets.MEDIA_DISK_DEV }}"  >> .env
+              echo ''                             >> .env
+
+              echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_DEV }}"  >> .env
+              echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}"  >> .env
+              echo "AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION_DEV }}"  >> .env
+              echo "AWS_BUCKET=${{ secrets.AWS_BUCKET_DEV }}"  >> .env
+
+              echo ''                             >> .env
               echo "MAIL_MAILER=${{ secrets.MAIL_MAILER_DEV }}"  >> .env
               echo "MAIL_HOST=${{ secrets.MAIL_HOST_DEV }}"   >> .env
               echo 'MAIL_PORT=587'                >> .env
@@ -162,6 +171,13 @@ jobs:
               echo "DB_USERNAME=${{ secrets.DB_PROD_USER }}"   >> .env
               echo "DB_PASSWORD=${{ secrets.DB_PROD_PASSWORD }}" >> .env
               echo ''                             >> .env
+
+              echo "MEDIA_DISK=${{ secrets.MEDIA_DISK_PROD }}"  >> .env
+
+              echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_PROD }}"  >> .env
+              echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}"  >> .env
+              echo "AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION_PROD }}"  >> .env
+              echo "AWS_BUCKET=${{ secrets.AWS_BUCKET_PROD }}"  >> .env
 
               echo "MAIL_MAILER=${{ secrets.MAIL_MAILER_PROD }}"  >> .env
               echo "MAIL_HOST=${{ secrets.MAIL_HOST_PROD }}"   >> .env

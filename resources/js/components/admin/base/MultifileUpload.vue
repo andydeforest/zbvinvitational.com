@@ -13,7 +13,11 @@
       @select="onSelect"
       @uploader="upload"
       class="w-full"
-    />
+    >
+      <template v-if="uploading" #header>
+        <BaseSpinner />
+      </template>
+    </FileUpload>
 
     <p v-if="uploading" class="mt-2">Uploading…</p>
     <p v-if="error" class="mt-2 text-red-600">{{ error }}</p>
@@ -29,13 +33,13 @@
 
   const fileUploader = ref<FileUploadEmitsOptions | null>(null);
 
-  // define our props
   const props = defineProps({
     url: { type: String, required: true },
     fieldName: { type: String, default: 'files' },
     headers: { type: Object as PropType<Record<string, string>>, default: () => ({}) },
     multiple: { type: Boolean, default: true },
-    accept: { type: String, default: '' }
+    accept: { type: String, default: '' },
+    customData: { type: Object as PropType<Record<string, any>>, default: () => ({}) }
   });
 
   // allow parent to listen for 'uploaded'
@@ -44,14 +48,17 @@
   }>();
 
   // pull out refs
-  const { url, fieldName, headers, multiple, accept } = toRefs(props);
+  const { url, fieldName, headers, multiple, accept, customData } = toRefs(props);
 
-  // wire up the composable
-  const { selected, uploading, error, uploaded, onSelect, upload } = useFileUpload({
+  const opts: UseFileUploadOptions = {
     url: url.value,
     fieldName: fieldName.value,
-    multiple: multiple.value
-  });
+    multiple: multiple.value,
+    extraData: () => customData.value
+  };
+
+  // wire up the composable
+  const { selected, uploading, error, uploaded, onSelect, upload } = useFileUpload(opts);
 
   // ref to the PrimeVue FileUpload so we can clear its queue
   const uploader = ref<InstanceType<typeof FileUpload> | null>(null);

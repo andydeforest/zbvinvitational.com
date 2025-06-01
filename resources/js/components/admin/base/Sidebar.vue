@@ -22,6 +22,12 @@
         <li>
           <Link href="/admin/donors">Donor Management</Link>
         </li>
+        <li>
+          <Link href="/admin/gallery">Photo Gallery</Link>
+        </li>
+        <li>
+          <Link href="/admin/contact">Contact Messages</Link>
+        </li>
       </ul>
       <div class="admin-dashboard-sidebar__footer">
         <button @click="logout" class="button is-outlined is-white is-fullwidth">Logout</button>

@@ -34,7 +34,7 @@ class DonorLogoController extends Controller
 
             $logo->addMedia($file)
                 ->usingFileName($uniqueName)
-                ->toMediaCollection();
+                ->toMediaCollection('donors');
 
             $created[] = $logo;
         }

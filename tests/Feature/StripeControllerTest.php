@@ -72,7 +72,7 @@ class StripeControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson(action([\App\Http\Controllers\StripeController::class, 'create']), $payload);
+        $response = $this->postJson(action([\App\Http\Controllers\API\StripeController::class, 'create']), $payload);
 
         $response
             ->assertStatus(200)

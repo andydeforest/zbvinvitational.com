@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\DonorLogoResource;
 use App\Models\Assets\DonorLogo;
+use App\Models\Assets\Photo;
 use App\Models\Donor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -42,26 +43,20 @@ class PagesController extends Controller
 
     public function gallery(Request $request)
     {
-        // todo: abstract this logic
-        $galleryPath = storage_path('app/public/images/gallery');
+        $years = Photo::availableYears();
 
-        if (! File::isDirectory($galleryPath)) {
-            File::makeDirectory($galleryPath, 0755, true);
-        }
+        /** @var string|null $yearParam */
+        $yearParam = $request->get('year');
 
-        $years = collect(File::directories($galleryPath))
-            ->map(fn ($path) => basename($path))
-            ->sortDesc()
-            ->values();
+        $requestedYear = $yearParam !== null
+            ? $yearParam
+            : '';
 
-        $requestedYear = $request->get('year');
-
-        $activeYear = is_string($requestedYear) && in_array($requestedYear, $years->all(), true)
+        $activeYear = $years->contains($requestedYear)
             ? $requestedYear
             : (string) $years->first();
 
-        $images = collect(File::files("$galleryPath/$activeYear"))
-            ->map(fn ($file) => asset("storage/images/gallery/$activeYear/".$file->getFilename()));
+        $images = Photo::imagesForYear($activeYear);
 
         return Inertia::render('Public/Gallery', [
             'years' => $years,

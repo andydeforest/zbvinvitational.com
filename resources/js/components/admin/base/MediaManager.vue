@@ -4,6 +4,9 @@
       <p class="empty-message">No items found.</p>
     </slot>
     <div class="admin-base-media-manager__grid" v-else>
+      <div v-if="loading" class="admin-base-media-manager__overlay">
+        <BaseSpinner />
+      </div>
       <div
         v-for="item in items"
         :key="item.id"
@@ -48,8 +51,9 @@
     media: { original_url: string };
   }
 
-  const props = defineProps<{
+  defineProps<{
     items: MediaItem[];
+    loading: boolean;
   }>();
 
   const emit = defineEmits<{
@@ -94,9 +98,25 @@
 <style lang="scss">
   .admin-base-media-manager {
     &__grid {
+      position: relative;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
       gap: 1rem;
+      min-height: 10rem;
+    }
+
+    &__overlay {
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 3rem 0;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.7);
+      z-index: 100;
     }
 
     &__item {

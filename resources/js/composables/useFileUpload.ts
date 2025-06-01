@@ -5,6 +5,7 @@ export interface UseFileUploadOptions {
   url: string;
   fieldName?: string;
   multiple?: boolean;
+  extraData?: () => Record<string, any> | Record<string, any>;
 }
 
 const token = import.meta.env.VITE_ADMIN_TOKEN;
@@ -35,14 +36,29 @@ export function useFileUpload(opts: UseFileUploadOptions) {
     const form = new FormData();
     selected.value.forEach((f) => form.append(`${fieldName}[]`, f));
 
+    if (opts.extraData) {
+      // If extraData is a function, call it; otherwise use it directly:
+      const dataObj = typeof opts.extraData === 'function' ? opts.extraData() : opts.extraData;
+
+      Object.entries(dataObj).forEach(([key, value]) => {
+        // Always convert to string before appending
+        form.append(key, String(value));
+      });
+    }
+
     try {
       const res = await axios.post(opts.url, form, {
         headers: { 'Content-Type': 'multipart/form-data', ...uploadHeaders }
       });
+
       uploaded.value = res.data.data ?? res.data;
       selected.value = [];
     } catch (e: any) {
-      error.value = e.response?.data?.message || e.message || 'Upload failed.';
+      // Grab Laravel’s error message (or fallback)
+      error.value =
+        e.response?.data?.message || e.response?.data?.errors
+          ? JSON.stringify(e.response.data.errors)
+          : e.message || 'Upload failed.';
     } finally {
       uploading.value = false;
     }

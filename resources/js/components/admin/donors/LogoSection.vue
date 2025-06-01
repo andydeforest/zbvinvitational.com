@@ -2,6 +2,7 @@
   <AdminBaseSection title="Donor Logos" class="admin-donors-logo-section">
     <AdminBaseMediaManager
       :items="logosList"
+      :loading="logosLoading"
       v-model:selected="selectedForDeletion"
       @delete-item="deleteLogo"
       @bulk-delete="deleteSelected"
@@ -32,21 +33,26 @@
 
   const logosList = ref<DonorLogo[]>([...props.logos]);
   const selectedForDeletion = ref<number[]>([]);
+  const logosLoading = ref(false);
 
   const onUploaded = (files: DonorLogo[]) => {
     logosList.value.unshift(...files);
   };
 
   async function deleteLogo(id: number) {
+    logosLoading.value = true;
     await axios.delete(`/api/donor-logos/${id}`);
     logosList.value = logosList.value.filter((l) => l.id !== id);
+    logosLoading.value = false;
   }
 
   // bulk delete handler
   async function deleteSelected(ids: number[]) {
+    logosLoading.value = true;
     await axios.post('/api/donor-logos/bulk-delete', { ids });
     logosList.value = logosList.value.filter((l) => !ids.includes(l.id));
     selectedForDeletion.value = [];
+    logosLoading.value = false;
   }
 </script>
 

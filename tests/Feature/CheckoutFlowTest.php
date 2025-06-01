@@ -54,7 +54,7 @@ class CheckoutFlowTest extends TestCase
         $this->assertDatabaseCount('dinner_only', 0);
 
         $order = Order::first();
-        $this->assertEquals(5_000 * 2, $order->total_cents);
+        $this->assertEquals(5000 * 2, $order->total_cents);
     }
 
     #[Test]
@@ -106,7 +106,7 @@ class CheckoutFlowTest extends TestCase
         ]);
 
         $order = Order::first();
-        $this->assertEquals(12_000 + 1_500, $order->total_cents);
+        $this->assertEquals(12000 + 1500, $order->total_cents);
     }
 
     #[Test]
@@ -127,7 +127,7 @@ class CheckoutFlowTest extends TestCase
     public function missing_billing_returns_validation_errors_on_each_field()
     {
         // need at least cart to reach billing rules
-        $product = Product::factory()->create(['type' => 'donation', 'price' => 1_000]);
+        $product = Product::factory()->create(['type' => 'donation', 'price' => 1000]);
 
         $response = $this->postJson('/api/payment-intent', [
             'cart' => [['product' => ['id' => $product->id, 'price' => $product->price], 'quantity' => 1]],

@@ -29,4 +29,9 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('contact', [ContactController::class, 'show'])->name('contact.show');
 
+    Route::prefix('gallery')->name('admin.gallery')->group(function () {
+        Route::get('/', [GalleryController::class, 'index'])->name('index');
+        Route::post('/', [GalleryController::class, 'store'])->name('store');
+        Route::delete('/{photo}', [GalleryController::class, 'destroy'])->name('destroy');
+    });
 });

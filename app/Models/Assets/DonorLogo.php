@@ -21,5 +21,11 @@ class DonorLogo extends Model implements HasMedia
         });
     }
 
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('donors')
+            ->useDisk('s3');
+    }
+
     public function registerMediaConversions(?Media $media = null): void {}
 }

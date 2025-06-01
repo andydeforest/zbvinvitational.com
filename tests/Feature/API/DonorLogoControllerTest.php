@@ -19,8 +19,7 @@ class DonorLogoControllerTest extends TestCase
     {
         parent::setUp();
 
-        $disk = config('medialibrary.disk_name', 'public');
-        Storage::fake($disk);
+        Storage::fake('s3');
         $user = User::factory()->create();
         Sanctum::actingAs($user, ['*']);
     }
@@ -28,27 +27,40 @@ class DonorLogoControllerTest extends TestCase
     #[Test]
     public function store_creates_logos_and_stores_files()
     {
+        Storage::fake('s3');
+
         $file1 = UploadedFile::fake()->image('logo1.jpg');
         $file2 = UploadedFile::fake()->image('logo2.png');
 
-        $response = $this->postJson('/api/donor-logos', [
+        $response = $this->post('/api/donor-logos', [
+            // the controller expects 'files' => array of UploadedFile
             'files' => [$file1, $file2],
         ]);
 
         $response->assertStatus(201)
             ->assertJsonCount(2, 'data');
 
-        $disk = config('medialibrary.disk_name', 'public');
-        $data = $response->json('data');
+        $disk = config('medialibrary.disk_name', 's3');
 
         $this->assertDatabaseCount('donor_logos', 2);
+
+        $data = $response->json('data');
+
         foreach ($data as $item) {
-            $this->assertDatabaseHas('donor_logos', ['id' => $item['id']]);
+            $this->assertDatabaseHas('donor_logos', [
+                'id' => $item['id'],
+            ]);
 
             $logo = DonorLogo::findOrFail($item['id']);
-            $media = $logo->getFirstMedia();
-            $this->assertNotNull($media, "Expected media record for logo {$logo->id}");
-            Storage::disk($disk)->assertExists($media->getPathRelativeToRoot());
+            $media = $logo->getFirstMedia('donors');
+
+            $this->assertNotNull(
+                $media,
+                "Expected a media record in the 'donors' collection for DonorLogo ID {$logo->id}"
+            );
+
+            Storage::disk($disk)
+                ->assertExists($media->getPathRelativeToRoot());
         }
     }
 

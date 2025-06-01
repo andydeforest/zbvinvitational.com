@@ -3,7 +3,9 @@
 namespace App\Http\Requests\Store;
 
 use App\Models\Product;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class OrderRequest extends FormRequest
 {
@@ -30,6 +32,14 @@ class OrderRequest extends FormRequest
             'cart.*.product.metadata' => 'nullable|array',
             'cart.*.quantity' => 'required|integer|min:1',
         ];
+    }
+
+    protected function failedValidation(Validator $validator): void
+    {
+        throw new HttpResponseException(response()->json([
+            'message' => 'The given data was invalid.',
+            'errors' => $validator->errors(),
+        ], 422));
     }
 
     /**

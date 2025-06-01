@@ -13,6 +13,7 @@ class ModelBasedPathGenerator implements PathGenerator
 
     protected array $map = [
         \App\Models\Assets\DonorLogo::class => DonorLogoPathGenerator::class,
+        \App\Models\Assets\Photo::class => PhotoPathGenerator::class,
     ];
 
     protected function getGeneratorFor(Media $media): PathGenerator

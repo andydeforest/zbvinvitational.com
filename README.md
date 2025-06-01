@@ -15,7 +15,8 @@
 - [ ] Improve test coverage
 - [ ] Offload gallery images into an external file host
 - [ ] Add additional admin controls
-
+- [ ] Admin panel mobile optimizations
+- [ ] Automate backups
 ---
 
 ## Table of Contents
