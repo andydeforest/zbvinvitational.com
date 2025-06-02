@@ -82,7 +82,6 @@
   });
 
   const onUploaded = (files: GalleryItem[]) => {
-    console.log('do i fire?', files);
     mediaLoading.value = true;
     const normalized = files.map((f) => ({
       id: f.id,
