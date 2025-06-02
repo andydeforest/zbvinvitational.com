@@ -4,7 +4,7 @@ import 'swiper/css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import 'vue-toast-notification/dist/theme-sugar.css';
 
-import { createApp, h, Transition } from 'vue';
+import { createApp, h } from 'vue';
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 
