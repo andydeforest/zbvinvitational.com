@@ -51,8 +51,8 @@
       flex-direction: column;
       position: fixed;
       top: var(--header-height);
+      bottom: 0;
       width: 75vw;
-      height: calc(100dvh - var(--header-height));
       background-color: var(--zbv-primary);
       right: -75vw;
       transition: all linear 0.2s;
