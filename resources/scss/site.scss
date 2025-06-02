@@ -3,6 +3,9 @@
 body,
 html {
     background-color: #fff;
+    color: hsl(0, 0, 12%);
+    color-scheme: light;
+    supported-color-schemes: light;
 }
 
 .primary-overlay {

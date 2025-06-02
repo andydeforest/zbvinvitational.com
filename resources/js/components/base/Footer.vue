@@ -2,12 +2,12 @@
   <footer class="base-footer">
     <BaseSection class="base-footer__section">
       <div class="base-footer__logos">
-        <a href="#" target="_blank">
+        <a href="https://www.guidestar.org/profile/83-2803947" target="_blank">
           <img :src="'/images/guidestar.jpg'" alt="Gold Transparency award from Guidestar." />
         </a>
-        <a href="#" target="_blank">
+        <Link href="#">
           <img :src="'/images/logo-small-light.png'" alt="ZBV logo." />
-        </a>
+        </Link>
       </div>
       <div>
         Non-profit Tax ID #
@@ -47,9 +47,13 @@
 
     &__logos {
       display: flex;
-      flex-direction: row;
+      flex-direction: column-reverse;
       gap: 2rem;
       align-items: center;
+
+      @include mixins.desktop {
+        flex-direction: row;
+      }
 
       img {
         max-height: 100px;

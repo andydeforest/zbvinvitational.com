@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="supported-color-schemes" content="light">
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" sizes="any" />
     <title inertia>{{ config('app.name', 'The Zeke Bondy-Villa Invitational Golf Tournament') }}</title>
     @routes
