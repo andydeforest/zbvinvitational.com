@@ -6,7 +6,7 @@
       :customUpload="true"
       :multiple="multiple"
       :accept="accept"
-      chooseLabel="Browse…"
+      chooseLabel="Browse"
       uploadLabel="Upload"
       :headers="headers"
       :disabled="uploading"
@@ -25,57 +25,47 @@
 </template>
 
 <script setup lang="ts">
-  import { toRefs, ref, watch } from 'vue';
+  import { ref, watch } from 'vue';
   import FileUpload from 'primevue/fileupload';
   import type { PropType } from 'vue';
-  import type { FileUploadEmitsOptions } from 'primevue/fileupload';
   import { useFileUpload, UseFileUploadOptions } from '@/composables/useFileUpload';
-
-  const fileUploader = ref<FileUploadEmitsOptions | null>(null);
+  import type { FileUploadEmitsOptions } from 'primevue/fileupload';
 
   const props = defineProps({
     url: { type: String, required: true },
     fieldName: { type: String, default: 'files' },
-    headers: { type: Object as PropType<Record<string, string>>, default: () => ({}) },
+    headers: {
+      type: Object as PropType<Record<string, string>>,
+      default: () => ({})
+    },
     multiple: { type: Boolean, default: true },
     accept: { type: String, default: '' },
-    customData: { type: Object as PropType<Record<string, any>>, default: () => ({}) }
+    customData: {
+      type: Object as PropType<Record<string, any>>,
+      default: () => ({})
+    }
   });
 
-  // allow parent to listen for 'uploaded'
   const emit = defineEmits<{
     (e: 'uploaded', files: any[]): void;
   }>();
 
-  // pull out refs
-  const { url, fieldName, headers, multiple, accept, customData } = toRefs(props);
+  const fileUploader = ref<FileUploadEmitsOptions | null>(null);
 
   const opts: UseFileUploadOptions = {
-    url: url.value,
-    fieldName: fieldName.value,
-    multiple: multiple.value,
-    extraData: () => customData.value
-  };
-
-  // wire up the composable
-  const { selected, uploading, error, uploaded, onSelect, upload } = useFileUpload(opts);
-
-  // ref to the PrimeVue FileUpload so we can clear its queue
-  const uploader = ref<InstanceType<typeof FileUpload> | null>(null);
-
-  function clearAll() {
-    if (fileUploader.value) {
-      fileUploader.value.clear();
-    }
-  }
-
-  // whenever `uploaded` changes, emit to parent
-  watch(uploaded, (files) => {
-    if (files.length) {
-      clearAll();
+    url: props.url,
+    fieldName: props.fieldName,
+    multiple: props.multiple,
+    extraData: () => props.customData,
+    onCompleted: (files: GalleryItem[]) => {
+      if (fileUploader.value) {
+        fileUploader.value.clear();
+      }
       emit('uploaded', files);
     }
-  });
+  };
+
+  const { uploading, error, onSelect, upload } = useFileUpload(opts);
 </script>
 
 <style lang="scss">

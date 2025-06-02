@@ -31,14 +31,12 @@
         </div>
       </div>
     </div>
-    <button
-      v-if="selected.length"
-      type="button"
-      class="button is-danger admin-base-media-manager__bulk-delete"
-      @click="bulkDelete"
-    >
-      Delete Selected ({{ selected.length }})
-    </button>
+    <div class="buttons admin-base-media-manager__actions">
+      <button v-if="selected.length" type="button" class="button is-danger" @click="bulkDelete">
+        Delete Selected ({{ selected.length }})
+      </button>
+      <button @click="selectAll" type="button" class="button is-secondary">Select All</button>
+    </div>
   </div>
 </template>
 
@@ -51,7 +49,7 @@
     media: { original_url: string };
   }
 
-  defineProps<{
+  const props = defineProps<{
     items: MediaItem[];
     loading: boolean;
   }>();
@@ -66,6 +64,15 @@
 
   function isSelected(id: number) {
     return selected.value.includes(id);
+  }
+
+  function selectAll() {
+    const allIds = props.items.map((i: MediaItem) => i.id);
+    // If everything is already selected, clear the selection; otherwise select everything
+    const alreadyAll = allIds.every((id: number) => selected.value.includes(id));
+
+    selected.value = alreadyAll ? [] : allIds;
+    emit('update:selected', [...selected.value]);
   }
 
   function toggleSelection(id: number) {
@@ -136,7 +143,7 @@
       margin: 0.5rem;
     }
 
-    &__bulk-delete {
+    &__actions {
       margin-top: 1rem;
     }
   }
