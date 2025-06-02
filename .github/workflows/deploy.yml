@@ -85,7 +85,21 @@ jobs:
         run: npm run build
 
       # ────────────────────────────────────────────────────
-      # 7) Sync code to Lightsail via rsync over SSH
+      # 7) Fix file permissions
+      # ────────────────────────────────────────────────────
+      - name: Set storage permissions
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.LIGHTSAIL_HOST }}
+          username: ${{ secrets.LIGHTSAIL_USER }}
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          script: |
+            # ensure the "deploy" user owns and can write to storage/*
+            sudo chown -R deploy:www-data ${{ steps.env-vars.outputs.TARGET_DIR }}/storage
+            sudo chmod -R ug+rwx ${{ steps.env-vars.outputs.TARGET_DIR }}/storage
+
+      # ────────────────────────────────────────────────────
+      # 8) Sync code to Lightsail via rsync over SSH
       # ────────────────────────────────────────────────────
       - name: Sync to Lightsail via rsync
         uses: burnett01/rsync-deployments@7.0.2
@@ -98,7 +112,7 @@ jobs:
           remote_path: ${{ steps.env-vars.outputs.TARGET_DIR }}
 
       # ────────────────────────────────────────────────────
-      # 8) SSH in and build the real .env from secrets, then migrate/cache
+      # 9) SSH in and build the real .env from secrets, then migrate/cache
       # ────────────────────────────────────────────────────
       - name: Build .env and deploy on server
         uses: appleboy/ssh-action@v0.1.0
