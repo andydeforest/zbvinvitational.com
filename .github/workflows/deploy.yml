@@ -148,6 +148,11 @@ jobs:
               echo "DB_PASSWORD=${{ secrets.DB_DEV_PASSWORD }}" >> .env
               echo ''                             >> .env
 
+              echo 'QUEUE_CONNECTION=redis'         >> .env
+              echo 'REDIS_HOST=127.0.0.1'            >> .env
+              echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD_PROD }}"   >> .env
+              echo "REDIS_PORT=${{ secrets.REDIS_PORT }}"   >> .env
+
               echo "MEDIA_DISK=${{ secrets.MEDIA_DISK_DEV }}"  >> .env
               echo ''                             >> .env
 
@@ -207,6 +212,13 @@ jobs:
               echo "DB_DATABASE=${{ secrets.DB_PROD_NAME }}"   >> .env
               echo "DB_USERNAME=${{ secrets.DB_PROD_USER }}"   >> .env
               echo "DB_PASSWORD=${{ secrets.DB_PROD_PASSWORD }}" >> .env
+              echo ''                             >> .env
+
+              echo 'QUEUE_CONNECTION=redis'         >> .env
+              echo 'REDIS_HOST=127.0.0.1'            >> .env
+              echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD_DEV }}"   >> .env
+              echo "REDIS_PORT=${{ secrets.REDIS_PORT }}"   >> .env
+
               echo ''                             >> .env
 
               echo "MEDIA_DISK=${{ secrets.MEDIA_DISK_PROD }}"  >> .env
