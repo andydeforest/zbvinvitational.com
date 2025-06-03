@@ -95,6 +95,7 @@ jobs:
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
           script: |
             # ensure the "deploy" user owns and can write to storage/*
+            sudo touch storage/logs/laravel.log
             sudo chown -R deploy:www-data ${{ steps.env-vars.outputs.TARGET_DIR }}/storage
             sudo chmod -R ug+rwx ${{ steps.env-vars.outputs.TARGET_DIR }}/storage
 
