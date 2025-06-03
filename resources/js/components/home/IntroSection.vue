@@ -15,7 +15,10 @@
         shotgun start at 10 AM. The 9-hole golfers will begin at 12 PM.
       </p>
       <p>
-        This year's theme is "Golfing With the Stars." This theme is open to interpretation so do you best to wow us!
+        This year's theme is
+        <strong>Golfing With the Stars.</strong>
+        This theme is open to interpretation so do your best to wow us! Maybe come dressed as your favorite movie star,
+        celebrity,or a famous athlete?
       </p>
       <p>Registration will open June 1st on a first-come, first-served basis. We hope to see you there!</p>
     </div>
@@ -34,3 +37,11 @@
     randomImages: string[];
   }>();
 </script>
+
+<style lang="scss">
+  .home-intro-section {
+    p strong {
+      color: var(--zbv-primary);
+    }
+  }
+</style>

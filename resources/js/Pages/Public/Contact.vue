@@ -3,6 +3,7 @@
     <DefaultLayout>
         <BasePageHero title="Contact Us" />
         <ContactFormSection />
+        <ContactFaqSection />
     </DefaultLayout>
 </template>
 

@@ -98,6 +98,16 @@
           <span>Lynn Bondy-Villa</span>
           <a class="is-underlined" href="tel:+12094994076">(209) 499-4076</a>
         </li>
+
+        <li>
+          <span>Morgan Price</span>
+          <h3>Procurement Director</h3>
+          <a class="is-underlined" href="tel:+17073011741">(707) 301-1741</a>
+        </li>
+        <li>
+          <span>Alison Bondy-Villa</span>
+          <a class="is-underlined" href="tel:+12094043130">(209) 404-3130</a>
+        </li>
         <li>
           <span>Kevin McCormick</span>
           <a class="is-underlined" href="tel:+19168043084">(916) 804-3084</a>
@@ -171,6 +181,10 @@
           font-family: var(--heading-font-family);
           font-size: 1.5rem;
           font-weight: 600;
+        }
+
+        h3 {
+          font-size: 1rem;
         }
       }
     }
