@@ -1,5 +1,5 @@
 <template>
-  <BaseSection class="contact-faq-section">
+  <BaseSection class="faq-section">
     <h2 class="section-title">FAQ</h2>
     <div v-for="(question, x) in faq" :key="`question-${x}`" class="">
       <h3 class="is-size-4 contact-faq-section__question">
@@ -59,7 +59,7 @@
 </script>
 
 <style lang="scss">
-  .contact-faq-section {
+  .faq-section {
     --faq-gap: 2rem;
 
     display: flex;

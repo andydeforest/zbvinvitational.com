@@ -2,7 +2,7 @@
   <DefaultLayout>
     <Head title="FAQ" />
     <BasePageHero title="Frequently Asked Questions" />
-
+    <FaqSection />
   </DefaultLayout>
 </template>
 

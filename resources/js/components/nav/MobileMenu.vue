@@ -25,12 +25,10 @@
   const navStore = useNavStore();
   const links = navStore.links;
 
-  // Whenever isOpen toggles, add/remove a class on <body> so the page itself cannot scroll.
   watch(isOpen, (val) => {
     document.body.classList.toggle('no-scroll', val);
   });
 
-  // (Optional) Close the menu whenever the viewport resizes
   function handleResize() {
     isOpen.value = false;
   }
@@ -68,6 +66,7 @@
       right: -75vw;
       transition: all linear 0.2s;
       padding: 2rem var(--base-container-padding);
+      box-shadow: -20px 0 40px rgba(255, 255, 255, 0.1);
 
       &.is-active {
         right: 0;
