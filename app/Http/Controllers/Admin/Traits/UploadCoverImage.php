@@ -29,23 +29,17 @@ trait UploadCoverImage
         // new uploads
         if ($request->hasFile('cover_image')) {
             if ($existingPath) {
-                Storage::disk('public')->delete($existingPath);
-            }
-
-            // ensure our directory exists
-            $directory = "{$folder}/covers";
-            if (! Storage::disk('public')->exists($directory)) {
-                Storage::disk('public')->makeDirectory($directory);
+                Storage::disk('s3')->delete($existingPath);
             }
 
             $data['cover_image'] = $request
                 ->file('cover_image')
-                ->store($directory, 'public');
+                ->store("{$folder}/covers", 's3');
         }
         // clearing old
         elseif ($request->exists('cover_image') && $request->input('cover_image') === null) {
             if ($existingPath) {
-                Storage::disk('public')->delete($existingPath);
+                Storage::disk('s3')->delete($existingPath);
             }
             $data['cover_image'] = null;
         }

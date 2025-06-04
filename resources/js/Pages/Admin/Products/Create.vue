@@ -2,7 +2,12 @@
   <Head title="Create Product" />
   <AdminLayout>
     <AdminBaseFormContainer :title="isEdit ? 'Edit Product' : 'Create New Product'">
-      <AdminProductsForm :form="form" :on-submit="submit" :categories="categories" :types="types" />
+      <AdminProductsForm
+        :form="form"
+        :on-submit="submit"
+        :categories="[...props.categories, emptyCat]"
+        :types="types"
+      />
     </AdminBaseFormContainer>
   </AdminLayout>
 </template>
@@ -18,6 +23,11 @@
     types: string[];
   }>();
 
+  const emptyCat: ProductCategory = {
+    name: 'N/A',
+    id: null
+  };
+
   const initialValues: Product = {
     name: '',
     short_name: '',
@@ -26,7 +36,7 @@
     allow_custom_price: false,
     price: 0,
     is_active: true,
-    product_category_id: props.categories.length ? props.categories[0].id : '',
+    product_category_id: null,
     cover_image: '',
     metadata: {
       fields: []

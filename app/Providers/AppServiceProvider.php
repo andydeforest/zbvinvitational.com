@@ -23,7 +23,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         AliasLoader::getInstance()->alias('Settings', SettingsFacade::class);
-
     }
 
     /**

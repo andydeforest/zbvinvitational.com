@@ -94,12 +94,21 @@ jobs:
           username: ${{ secrets.LIGHTSAIL_USER }}
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
           script: |
-            sudo mkdir -p ${{ steps.env-vars.outputs.TARGET_DIR }}/storage/logs
+            TARGET="{{ steps.env-vars.outputs.TARGET_DIR }}/storage/logs"
 
-            sudo touch ${{ steps.env-vars.outputs.TARGET_DIR }}/storage/logs/laravel.log
+            # 1) Create logs folder only if it doesn't exist
+            if [ ! -d "$TARGET" ]; then
+              sudo mkdir -p "$TARGET"
+            fi
 
-            sudo chown -R deploy:www-data ${{ steps.env-vars.outputs.TARGET_DIR }}/storage
-            sudo chmod -R ug+rwx     ${{ steps.env-vars.outputs.TARGET_DIR }}/storage
+            # 2) Create laravel.log only if it doesn't exist
+            if [ ! -f "$TARGET/laravel.log" ]; then
+              sudo touch "$TARGET/laravel.log"
+            fi
+
+            # 3) Always fix ownership/permissions on storage/*
+            sudo chown -R deploy:www-data "${{ steps.env-vars.outputs.TARGET_DIR }}/storage"
+            sudo chmod -R ug+rwx    "${{ steps.env-vars.outputs.TARGET_DIR }}/storage"
 
       # ────────────────────────────────────────────────────
       # 8) Sync code to Lightsail via rsync over SSH
@@ -183,10 +192,6 @@ jobs:
 
               sudo find bootstrap/cache -type d -exec chmod 775 {} \;
               sudo find bootstrap/cache -type f -exec chmod 664 {} \;
-
-              sudo touch storage/logs/laravel.log
-              sudo chown deploy:www-data storage/logs/laravel.log
-              sudo chmod 664 storage/logs/laravel.log
 
               composer install --no-dev --optimize-autoloader --no-interaction
               php artisan migrate

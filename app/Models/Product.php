@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property-read \App\Models\ProductCategory|null $category
@@ -89,6 +90,6 @@ class Product extends Model
             return null;
         }
 
-        return asset("storage/{$this->cover_image}");
+        return Storage::disk('s3')->url($this->cover_image);
     }
 }

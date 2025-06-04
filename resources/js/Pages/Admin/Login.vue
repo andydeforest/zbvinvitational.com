@@ -8,7 +8,15 @@
       <div class="field">
         <label class="label">Email</label>
         <div class="control">
-          <input class="input" type="email" v-model="form.email" placeholder="you@example.com" required autofocus />
+          <input
+            class="input"
+            type="email"
+            v-model="form.email"
+            autocomplete="email"
+            placeholder="you@example.com"
+            required
+            autofocus
+          />
         </div>
         <p class="help is-danger" v-if="form.errors.email">
           {{ form.errors.email }}
@@ -35,7 +43,7 @@
         </div>
       </div>
       <p class="has-text-centered">
-        <a :href="route('password.request')">Forgot your password?</a>
+        <a :href="$route('password.request')">Forgot your password?</a>
       </p>
     </form>
   </main>
@@ -53,7 +61,7 @@
 
   function submit() {
     form.post(route('login'), {
-      onFinish: () => form.reset('password')
+      onError: () => {}
     });
   }
 </script>

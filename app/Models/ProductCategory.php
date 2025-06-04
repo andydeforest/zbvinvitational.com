@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class ProductCategory extends Model
 {
@@ -25,6 +26,6 @@ class ProductCategory extends Model
             return null;
         }
 
-        return asset("storage/{$this->cover_image}");
+        return Storage::disk('s3')->url($this->cover_image);
     }
 }

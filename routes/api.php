@@ -1,7 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\API;
-
+use App\Http\Controllers\API\ContactController;
+use App\Http\Controllers\API\DonorLogoController;
+use App\Http\Controllers\API\GalleryController;
+use App\Http\Controllers\API\GolferController;
+use App\Http\Controllers\API\OrderController;
+use App\Http\Controllers\API\OrderItemController;
+use App\Http\Controllers\API\StripeController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/payment-intent', [StripeController::class, 'create']);

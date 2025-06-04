@@ -27,7 +27,7 @@ export interface Product extends Record<string, any> {
 export interface ProductCategory extends Record<string, any> {
   name: string;
   description?: string;
-  id?: number;
+  id?: number | null;
   products?: Product[];
   cover_image?: File | string | null;
 }
