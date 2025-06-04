@@ -26,23 +26,30 @@ trait UploadCoverImage
         ?string $existingPath,
         string $folder
     ): array {
-        // 1) New upload?
+        // new uploads
         if ($request->hasFile('cover_image')) {
             if ($existingPath) {
                 Storage::disk('public')->delete($existingPath);
             }
+
+            // ensure our directory exists
+            $directory = "{$folder}/covers";
+            if (! Storage::disk('public')->exists($directory)) {
+                Storage::disk('public')->makeDirectory($directory);
+            }
+
             $data['cover_image'] = $request
                 ->file('cover_image')
-                ->store("{$folder}/covers", 'public');
+                ->store($directory, 'public');
         }
-        // 2) Explicit clear?
+        // clearing old
         elseif ($request->exists('cover_image') && $request->input('cover_image') === null) {
             if ($existingPath) {
                 Storage::disk('public')->delete($existingPath);
             }
             $data['cover_image'] = null;
         }
-        // 3) Unchanged — drop the key
+        // unchanged — drop the key
         else {
             unset($data['cover_image']);
         }
