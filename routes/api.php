@@ -6,6 +6,7 @@ use App\Http\Controllers\API\GalleryController;
 use App\Http\Controllers\API\GolferController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\OrderItemController;
+use App\Http\Controllers\API\StatisticsController;
 use App\Http\Controllers\API\StripeController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,4 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('gallery/bulk-delete', [GalleryController::class, 'bulkDestroy']);
     // golfers
     Route::get('/golfers', [GolferController::class, 'index']);
+    // admin stats
+    Route::get('/statistics', [StatisticsController::class, 'index']);
+
 });

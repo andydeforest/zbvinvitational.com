@@ -3,7 +3,7 @@
   <AdminLayout grid-section-layout>
     <AdminDashboardLatestOrdersSection />
     <AdminDashboardContactMessagesSection />
-    <AdminBaseSection title="Statistics">1</AdminBaseSection>
+    <AdminDashboardStatisticsSection />
     <AdminDashboardSettingsSection />
   </AdminLayout>
 </template>
