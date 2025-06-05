@@ -8,6 +8,16 @@
     >
       <template #controls="{ filters, model }">
         <div class="field mb-0">
+          <label class="label is-small">Order Status</label>
+          <div class="select is-small">
+            <select v-model="model.status">
+              <option :value="null">All</option>
+              <option value="paid">Paid</option>
+              <option value="pending">Pending</option>
+            </select>
+          </div>
+        </div>
+        <div class="field mb-0">
           <label class="label is-small">Order Type</label>
           <div class="select is-small">
             <select v-model="model.type">
@@ -51,6 +61,11 @@
 
   const filters = [
     {
+      key: 'status',
+      type: 'select',
+      accessor: (item: any) => item.order.status
+    },
+    {
       key: 'type',
       type: 'select',
       accessor: (item: any) => item.product?.type
@@ -77,6 +92,7 @@
     },
     {
       headerName: 'Name',
+      filter: true,
       valueGetter: (params) =>
         params.data?.order ? `${params.data.order.first_name} ${params.data.order.last_name}` : ''
     },
@@ -108,6 +124,7 @@
     },
     {
       headerName: 'Order Placed',
+      filter: true,
       field: 'created_at',
       valueFormatter: (params: any) => {
         if (!params.value) return '';

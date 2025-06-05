@@ -25,14 +25,32 @@ class OrderControllerTest extends TestCase
     }
 
     #[Test]
-    public function index_returns_all_orders_sorted_by_created_at_desc()
+    public function index_returns_all_paid_orders_sorted_by_created_at_desc()
     {
-        // Create three orders at different times
-        $oldest = Order::factory()->create(['created_at' => Carbon::now()->subDays(2)]);
-        $middle = Order::factory()->create(['created_at' => Carbon::now()->subDay()]);
-        $newest = Order::factory()->create(['created_at' => Carbon::now()]);
+        $unpaid = Order::factory()->create([
+            'status' => 'pending', // or whatever your non‐paid status is
+            'created_at' => Carbon::now()->subDays(3),
+        ]);
 
-        // Attach one item+product to each so the relation is loaded
+        $productForUnpaid = Product::factory()->create();
+        OrderItem::factory()->for($unpaid)->for($productForUnpaid)->create();
+
+        $oldest = Order::factory()->create([
+            'status' => 'paid',
+            'created_at' => Carbon::now()->subDays(2),
+        ]);
+
+        $middle = Order::factory()->create([
+            'status' => 'paid',
+            'created_at' => Carbon::now()->subDay(),
+        ]);
+
+        $newest = Order::factory()->create([
+            'status' => 'paid',
+            'created_at' => Carbon::now(),
+        ]);
+
+        // attach one item + product to each so the relation is loaded
         foreach ([$oldest, $middle, $newest] as $order) {
             $product = Product::factory()->create();
             OrderItem::factory()->for($order)->for($product)->create();
@@ -41,12 +59,12 @@ class OrderControllerTest extends TestCase
         $response = $this->getJson('/api/orders');
 
         $response->assertOk()
+            // only the 3 paid orders should appear (in descending order of created_at)
             ->assertJsonCount(3)
-                 // newest first
             ->assertJsonPath('0.id', $newest->id)
             ->assertJsonPath('1.id', $middle->id)
             ->assertJsonPath('2.id', $oldest->id)
-                 // and each entry has its items.product
+            // and each entry still has its items.product
             ->assertJsonStructure([
                 '*' => ['id', 'created_at', 'items' => [
                     '*' => ['id', 'product' => ['id']],
@@ -55,22 +73,34 @@ class OrderControllerTest extends TestCase
     }
 
     #[Test]
-    public function index_limits_results_when_latest_parameter_is_provided()
+    public function index_limits_paid_orders_when_latest_parameter_is_provided()
     {
-        $first = Order::factory()->create(['created_at' => Carbon::now()->subDays(2)]);
-        $second = Order::factory()->create(['created_at' => Carbon::now()->subDay()]);
-        $third = Order::factory()->create(['created_at' => Carbon::now()]);
+        $first = Order::factory()->create([
+            'status' => 'paid',
+            'created_at' => Carbon::now()->subDays(2),
+        ]);
 
+        $second = Order::factory()->create([
+            'status' => 'paid',
+            'created_at' => Carbon::now()->subDay(),
+        ]);
+
+        $third = Order::factory()->create([
+            'status' => 'paid',
+            'created_at' => Carbon::now(),
+        ]);
+
+        // attach one item and product to each so the relation is loaded
         foreach ([$first, $second, $third] as $order) {
             $product = Product::factory()->create();
             OrderItem::factory()->for($order)->for($product)->create();
         }
 
+        // request latest=2 only the two most recent paid orders should appear
         $response = $this->getJson('/api/orders?latest=2');
 
         $response->assertOk()
             ->assertJsonCount(2)
-                 // should be the two most recent
             ->assertJsonPath('0.id', $third->id)
             ->assertJsonPath('1.id', $second->id);
     }
@@ -78,7 +108,10 @@ class OrderControllerTest extends TestCase
     #[Test]
     public function show_returns_order_resource_with_expected_fields_and_item_structure()
     {
-        $order = Order::factory()->create();
+        $order = Order::factory()->create([
+            'status' => 'paid',
+        ]);
+
         $product = Product::factory()->create([
             'name' => 'Test Product',
             'price' => 3419,
@@ -134,7 +167,9 @@ class OrderControllerTest extends TestCase
     {
         $order = Order::factory()
             ->has(OrderItem::factory()->count(1), 'items')
-            ->create();
+            ->create([
+                'status' => 'paid',
+            ]);
 
         $response = $this->deleteJson("/api/orders/{$order->public_id}");
 

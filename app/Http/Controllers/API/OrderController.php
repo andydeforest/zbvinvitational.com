@@ -15,7 +15,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
 
-        $orders = $this->applyLatest($request, Order::with(['items.product']))->get();
+        $orders = $this->applyLatest($request, Order::with(['items.product']))->where('status', 'paid')->get();
 
         return $orders;
     }

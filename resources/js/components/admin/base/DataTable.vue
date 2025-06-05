@@ -64,7 +64,8 @@
   const model = ref<Record<string, any>>({
     search: '',
     type: null,
-    year: new Date().getFullYear()
+    year: new Date().getFullYear(),
+    status: 'paid'
   });
 
   function getByPath(obj: any, path: string): any {
