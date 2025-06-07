@@ -64,7 +64,6 @@
 
   async function fetchStatistics(): Promise<Statistics> {
     const { data } = await axios.get<Statistics>('/api/statistics');
-    console.log(data);
     return data;
   }
 </script>

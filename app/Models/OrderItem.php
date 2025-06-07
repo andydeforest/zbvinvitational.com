@@ -53,6 +53,11 @@ class OrderItem extends Model
         return $this->hasMany(DinnerOnly::class);
     }
 
+    public function scopeWherePaid($q)
+    {
+        return $q->whereHas('order', fn ($qb) => $qb->where('status', 'paid'));
+    }
+
     public function getUnitPriceDollarsAttribute(): float
     {
         return $this->unit_price_cents / 100;

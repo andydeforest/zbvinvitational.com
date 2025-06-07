@@ -25,14 +25,12 @@ class StatisticsController extends Controller
 
             // golfers
             $yearlyGolferCount = Golfer::whereBetween('created_at', [$yearStart, $yearEnd])
-                ->whereHas('orderItem.order', function ($q) {
-                    $q->where('status', 'paid');
-                })->count();
+                ->wherePaid()
+                ->count();
 
             $weeklyGolferCount = Golfer::whereBetween('created_at', [$weekStart, $now])
-                ->whereHas('orderItem.order', function ($q) {
-                    $q->where('status', 'paid');
-                })->count();
+                ->wherePaid()
+                ->count();
 
             // orders
             $yearlyOrderCount = Order::whereBetween('created_at', [$yearStart, $yearEnd])
@@ -46,18 +44,14 @@ class StatisticsController extends Controller
             $yearlySponsorCount = OrderItem::whereHas('product', function ($q) {
                 $q->where('type', SponsorshipProduct::identifier());
             })
-                ->whereHas('order', function ($q) {
-                    $q->where('status', 'paid');
-                })
+                ->wherePaid()
                 ->whereBetween('created_at', [$yearStart, $yearEnd])
                 ->sum('quantity');
 
             $weeklySponsorCount = OrderItem::whereHas('product', function ($q) {
                 $q->where('type', SponsorshipProduct::identifier());
             })
-                ->whereHas('order', function ($q) {
-                    $q->where('status', 'paid');
-                })
+                ->wherePaid()
                 ->whereBetween('created_at', [$weekStart, $now])
                 ->sum('quantity');
 
@@ -65,18 +59,14 @@ class StatisticsController extends Controller
             $yearlyDonationRevenueCents = OrderItem::whereHas('product', function ($q) {
                 $q->where('type', DonationProduct::identifier());
             })
-                ->whereHas('order', function ($q) {
-                    $q->where('status', 'paid');
-                })
+                ->wherePaid()
                 ->whereBetween('created_at', [$yearStart, $yearEnd])
                 ->sum(DB::raw('quantity * unit_price_cents'));
 
             $weeklyDonationRevenueCents = OrderItem::whereHas('product', function ($q) {
                 $q->where('type', DonationProduct::identifier());
             })
-                ->whereHas('order', function ($q) {
-                    $q->where('status', 'paid');
-                })
+                ->wherePaid()
                 ->whereBetween('created_at', [$weekStart, $now])
                 ->sum(DB::raw('quantity * unit_price_cents'));
 

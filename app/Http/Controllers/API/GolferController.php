@@ -10,7 +10,9 @@ class GolferController extends Controller
 {
     public function index(Request $request)
     {
-        $q = Golfer::with('orderItem.order')->orderBy('created_at');
+        $q = Golfer::with('orderItem.order')
+            ->wherePaid()
+            ->orderBy('created_at');
 
         if ($request->query('group_by') === 'year') {
             // fetch and group

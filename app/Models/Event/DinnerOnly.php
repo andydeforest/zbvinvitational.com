@@ -16,4 +16,9 @@ class DinnerOnly extends Model
     {
         return $this->belongsTo(OrderItem::class);
     }
+
+    public function scopeWherePaid($q)
+    {
+        return $q->whereHas('orderItem.order', fn ($qb) => $qb->where('status', 'paid'));
+    }
 }

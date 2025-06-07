@@ -25,9 +25,9 @@ class GolferControllerTest extends TestCase
     }
 
     #[Test]
-    public function index_returns_flat_list_ordered_by_created_at_ascending()
+    public function index_returns_flat_list_where_status_is_paid_ordered_by_created_at_ascending()
     {
-        $order = Order::factory()->create();
+        $order = Order::factory()->create(['status' => 'paid']);
         $item1 = OrderItem::factory()->for($order)->create();
         $item2 = OrderItem::factory()->for($order)->create();
         $item3 = OrderItem::factory()->for($order)->create();
@@ -51,9 +51,9 @@ class GolferControllerTest extends TestCase
     }
 
     #[Test]
-    public function index_groups_by_year_when_requested()
+    public function index_groups_by_year_where_status_is_paid_when_requested()
     {
-        $order = Order::factory()->create();
+        $order = Order::factory()->create(['status' => 'paid']);
         $itemA = OrderItem::factory()->for($order)->create();
         $itemB = OrderItem::factory()->for($order)->create();
         $itemC = OrderItem::factory()->for($order)->create();
