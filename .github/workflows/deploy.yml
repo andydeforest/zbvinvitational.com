@@ -94,7 +94,7 @@ jobs:
           username: ${{ secrets.LIGHTSAIL_USER }}
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
           script: |
-            TARGET="{{ steps.env-vars.outputs.TARGET_DIR }}/storage/logs"
+            TARGET="${{ steps.env-vars.outputs.TARGET_DIR }}/storage/logs"
 
             # 1) Create logs folder only if it doesn't exist
             if [ ! -d "$TARGET" ]; then
@@ -116,7 +116,7 @@ jobs:
       - name: Sync to Lightsail via rsync
         uses: burnett01/rsync-deployments@7.0.2
         with:
-          switches: -avzr --delete --exclude='.git/' --exclude='node_modules/' --exclude='vendor/' --exclude='storage/app/public/*' --exclude='storage/media-library/temp/*'
+          switches: -avzr --delete --exclude='.git/' --exclude='node_modules/' --exclude='vendor/' --exclude='storage/app/public/*' --exclude='storage/media-library/temp/*' --exclude='storage/logs/*'
           path: '.'
           remote_host: ${{ secrets.LIGHTSAIL_HOST }}
           remote_user: ${{ secrets.LIGHTSAIL_USER }}

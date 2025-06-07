@@ -65,6 +65,8 @@ class StripeController extends Controller
                 'stripe_payment_intent_id' => $intent->id,
             ]);
 
+            $metaIndex = 0;
+
             foreach ($cart as $index => $item) {
                 $product = Product::findOrFail($item['product']['id']);
                 $unit_price_cents = (int) $product->price;
@@ -83,7 +85,8 @@ class StripeController extends Controller
                 $allMeta = $orderItem->metadata;
 
                 for ($i = 0; $i < $item['quantity']; $i++) {
-                    $entryMeta = $metadata[$index * $item['quantity'] + $i] ?? [];
+                    $entryMeta = $metadata[$metaIndex++] ?? [];
+
                     $filtered = $this->productMetadataService->handle($orderItem, $entryMeta);
 
                     if (! empty($filtered)) {
