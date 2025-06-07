@@ -80,10 +80,18 @@ class StripeController extends Controller
                     'unit_price_cents' => $unit_price_cents,
                 ]);
 
-                $entryMeta = $metadata[$index] ?? [];
+                $allMeta = $orderItem->metadata;
 
-                $filteredMetadata = $this->productMetadataService->handle($orderItem, $entryMeta);
-                $orderItem->metadata = $filteredMetadata;
+                for ($i = 0; $i < $item['quantity']; $i++) {
+                    $entryMeta = $metadata[$index * $item['quantity'] + $i] ?? [];
+                    $filtered = $this->productMetadataService->handle($orderItem, $entryMeta);
+
+                    if (! empty($filtered)) {
+                        $allMeta[] = $filtered;
+                    }
+                }
+
+                $orderItem->metadata = $allMeta;
                 $orderItem->save();
             }
 

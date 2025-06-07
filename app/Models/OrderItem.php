@@ -27,6 +27,10 @@ class OrderItem extends Model
         'metadata' => 'array',
     ];
 
+    protected $attributes = [
+        'metadata' => '[]',
+    ];
+
     protected $appends = ['unit_price_dollars'];
 
     public function order(): BelongsTo

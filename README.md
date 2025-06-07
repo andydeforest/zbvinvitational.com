@@ -8,6 +8,8 @@
   Built with Laravel 12, Inertia.js & Vue 3
 </p>
 
+[![Deployment](https://github.com/andydeforest/zbvinvitational.com/actions/workflows/deploy.yml/badge.svg)](https://github.com/andydeforest/zbvinvitational.com/actions/workflows/deploy.yml)
+
 ---
 
 ## TODO

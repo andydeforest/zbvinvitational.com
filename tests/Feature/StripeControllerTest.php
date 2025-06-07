@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Order;
+use App\Http\Controllers\API\StripeController;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\ProductMetadataService;
@@ -47,42 +47,50 @@ class StripeControllerTest extends TestCase
                 ->andReturn($fakeIntent);
         }));
 
-        $this->instance(ProductMetadataService::class, \Mockery::mock(ProductMetadataService::class, function ($m) {
-            $m->shouldReceive('handle')
-                ->andReturn(['foo' => 'bar']);
-        }));
+        $this->instance(
+            ProductMetadataService::class,
+            \Mockery::mock(ProductMetadataService::class, function ($m) {
+                $m->shouldReceive('handle')
+                    ->twice()                           // two golfers
+                    ->withAnyArgs()                     // we don’t care about args
+                    ->andReturnUsing(fn ($orderItem, $entryMeta) => $entryMeta);
+            })
+        );
 
         $payload = [
             'cart' => [
                 ['product' => ['id' => $product->id, 'price' => 2000], 'quantity' => 2],
             ],
             'billing' => [
-                'firstName' => 'Jane',
-                'lastName' => 'Smith',
+                'firstName' => 'John',
+                'lastName' => 'Doe',
                 'address' => '123 Elm St',
                 'city' => 'Metropolis',
                 'state' => 'NY',
                 'zip' => '10001',
                 'phone' => '212-555-1212',
-                'email' => 'jane@smith.test',
-                'notes' => 'Leave at front desk',
+                'email' => 'john@doe.test',
+                'notes' => 'Early tee time',
             ],
             'metadata' => [
-                ['foo' => 'bar'],
+                ['name' => 'golfer 1'],
+                ['name' => 'golfer 2'],
             ],
         ];
 
-        $response = $this->postJson(action([\App\Http\Controllers\API\StripeController::class, 'create']), $payload);
+        $response = $this->postJson(
+            action([StripeController::class, 'create']),
+            $payload
+        );
 
-        $response
-            ->assertStatus(200)
+        $response->assertStatus(200)
             ->assertJsonStructure(['orderId', 'clientSecret'])
             ->assertJson(['clientSecret' => 'secret_xyz']);
 
         $this->assertDatabaseHas('orders', [
-            'first_name' => 'Jane',
-            'last_name' => 'Smith',
-            'total_cents' => 4_000,
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'total_cents' => 4000,
             'stripe_payment_intent_id' => 'pi_test_123',
         ]);
 
@@ -90,10 +98,19 @@ class StripeControllerTest extends TestCase
             'product_id' => $product->id,
             'quantity' => 2,
             'unit_price_cents' => 2000,
-            'metadata' => json_encode(['foo' => 'bar']),
+            'metadata' => json_encode([
+                ['name' => 'golfer 1'],
+                ['name' => 'golfer 2'],
+            ]),
         ]);
 
-        $order = Order::first();
+        $item = \App\Models\OrderItem::first();
+        $this->assertIsArray($item->metadata);
+        $this->assertCount(2, $item->metadata);
+        $this->assertEquals('golfer 1', $item->metadata[0]['name']);
+        $this->assertEquals('golfer 2', $item->metadata[1]['name']);
+
+        $order = \App\Models\Order::first();
         $this->assertEquals($order->public_id, $response->json('orderId'));
     }
 }
