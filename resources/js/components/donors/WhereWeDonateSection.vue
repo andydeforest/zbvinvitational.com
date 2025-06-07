@@ -19,7 +19,7 @@
     '/images/donors/our-donations/american-cancer-society.png',
     '/images/donors/our-donations/boys-and-girls-club-stanislaus.png',
     '/images/donors/our-donations/chicana-latina-foundation.png',
-    '/images/donors/our-donations/escalon-library.png',
+    '/images/donors/our-donations/friends-of-the-escalon-library.png',
     '/images/donors/our-donations/evelyn-andrews-golf-tournament.jpg',
     '/images/donors/our-donations/fox-chase.png',
     '/images/donors/our-donations/ice-cream-co.png',

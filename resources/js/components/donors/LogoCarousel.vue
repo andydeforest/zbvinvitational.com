@@ -63,6 +63,10 @@
       display: flex;
       align-items: center;
       height: var(--carousel-height);
+
+      img {
+        max-height: 100%;
+      }
     }
 
     &__static {

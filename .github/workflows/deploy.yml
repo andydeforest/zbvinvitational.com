@@ -139,31 +139,31 @@ jobs:
               # ────────────────────────────────────────────────────
               # 7A) Dev environment: write /var/www/zbv-dev/.env
               # ────────────────────────────────────────────────────
-              echo 'APP_NAME="ZBV (Dev)"'         >  .env
-              echo 'APP_ENV=dev'                  >> .env
-              echo 'APP_KEY='                     >> .env
-              echo 'APP_DEBUG=true'               >> .env
-              echo 'APP_URL=https://dev.zbvinvitational.com' >> .env
-              echo ''                             >> .env
+              echo 'APP_NAME="ZBV (Dev)"'                     >  .env
+              echo 'APP_ENV=dev'                              >> .env
+              echo 'APP_KEY=${{ secrets.APP_KEY_DEV }}'       >> .env
+              echo 'APP_DEBUG=true'                           >> .env
+              echo 'APP_URL=https://dev.zbvinvitational.com'  >> .env
+              echo ''                                         >> .env
 
-              echo 'LOG_CHANNEL=stack'            >> .env
-              echo ''                             >> .env
+              echo 'LOG_CHANNEL=stack'                        >> .env
+              echo ''                                         >> .env
 
-              echo 'DB_CONNECTION=pgsql'          >> .env
-              echo 'DB_HOST=127.0.0.1'             >> .env
-              echo 'DB_PORT=5432'                 >> .env
+              echo 'DB_CONNECTION=pgsql'                      >> .env
+              echo 'DB_HOST=127.0.0.1'                        >> .env
+              echo 'DB_PORT=5432'                             >> .env
               echo "DB_DATABASE=${{ secrets.DB_DEV_NAME }}"     >> .env
               echo "DB_USERNAME=${{ secrets.DB_DEV_USER }}"     >> .env
               echo "DB_PASSWORD=${{ secrets.DB_DEV_PASSWORD }}" >> .env
-              echo ''                             >> .env
+              echo ''                                         >> .env
 
-              echo 'QUEUE_CONNECTION=redis'         >> .env
-              echo 'REDIS_HOST=127.0.0.1'            >> .env
+              echo 'QUEUE_CONNECTION=redis'                   >> .env
+              echo 'REDIS_HOST=127.0.0.1'                     >> .env
               echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD_PROD }}"   >> .env
-              echo "REDIS_PORT=${{ secrets.REDIS_PORT }}"   >> .env
+              echo "REDIS_PORT=${{ secrets.REDIS_PORT }}"     >> .env
 
-              echo "MEDIA_DISK=${{ secrets.MEDIA_DISK_DEV }}"  >> .env
-              echo ''                             >> .env
+              echo "MEDIA_DISK=${{ secrets.MEDIA_DISK_DEV }}" >> .env
+            echo ''                                           >> .env
 
               echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_DEV }}"  >> .env
               echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}"  >> .env
@@ -195,7 +195,6 @@ jobs:
 
               composer install --no-dev --optimize-autoloader --no-interaction
               php artisan migrate
-              php artisan key:generate
               php artisan storage:link
             else
               # ────────────────────────────────────────────────────
@@ -203,7 +202,7 @@ jobs:
               # ────────────────────────────────────────────────────
               echo 'APP_NAME="ZBV"'              >  .env
               echo 'APP_ENV=production'         >> .env
-              echo 'APP_KEY='                    >> .env
+              echo 'APP_KEY=${{ secrets.APP_KEY_PROD }}'       >> .env
               echo 'APP_DEBUG=false'             >> .env
               echo 'APP_URL=https://zbvinvitational.com' >> .env
               echo ''                             >> .env
@@ -249,7 +248,6 @@ jobs:
               echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}"     >> .env
 
               composer install --no-dev --optimize-autoloader --no-interaction
-              php artisan key:generate --force
               php artisan migrate --env=production --force
               php artisan storage:link
               php artisan config:cache
