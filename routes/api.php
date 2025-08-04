@@ -30,5 +30,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/golfers', [GolferController::class, 'index']);
     // admin stats
     Route::get('/statistics', [StatisticsController::class, 'index']);
-
+    // keep-alive
+    Route::get('/ping', fn () => response()->json(['pong' => true]));
 });

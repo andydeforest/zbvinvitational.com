@@ -11,8 +11,10 @@
 </template>
 
 <script setup lang="ts">
+  import axios from 'axios';
   import { usePage } from '@inertiajs/vue3';
   import { useToastNotification } from '@/composables/useToastNotification';
+
   withDefaults(
     defineProps<{
       gridSectionLayout?: boolean;
@@ -41,6 +43,14 @@
       if (msg) toast.error(msg);
     },
     { immediate: true }
+  );
+
+  // session keep-alive
+  setInterval(
+    async () => {
+      await axios.get('/api/ping').catch(() => {});
+    },
+    5 * 60 * 1000
   );
 </script>
 
