@@ -25,7 +25,7 @@
                     <td>{{ $item->product->name }}</td>
                     <td>{{ $item->quantity }}</td>
                     <td>${{ $item->product->price_dollars }}</td>
-                    <td>${{ number_format($item->unit_price_dollars, 2) }}</td>
+                    <td>${{ number_format($item->unit_price_dollars * $item->quantity, 2) }}</td>
                 </tr>
             @endforeach
             <tr>
