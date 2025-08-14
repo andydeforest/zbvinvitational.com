@@ -55,6 +55,10 @@
         </div>
         <div class="field">
           <p>
+            We will have water stations placed throughout the course, please bring a personal water bottle to fill up as
+            needed.
+          </p>
+          <p>
             If you have any questions about your order or technical difficulties, please
             <Link href="/contact" class="is-underlined">contact us.</Link>
           </p>

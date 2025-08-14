@@ -43,6 +43,7 @@
         <p>We are looking forward to seeing you on the <strong>{{ $eventDate->format('F j, Y') }}</strong>! The golf
             tournament will begin at 10:00am. Please check the website for more details.</p>
     @endif
+    <p>We will have water stations placed throughout the course, please bring a personal water bottle to fill up as needed.</p>
     <p>Please note our Tax ID #<strong>83-2803947</strong> for your records. All donations are tax-deductible.</p>
     <p>If you have any questions or concerns with your order, please <a href="{{ url('contact') }}" target="_blank">contact
             us</a>.</p>

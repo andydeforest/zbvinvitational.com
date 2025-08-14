@@ -224,7 +224,7 @@
               </div>
             </template>
             <div class="field">
-              <label class="label">Order notes (optional)</label>
+              <label class="label">Dietary Restrictions/other important information you would like us to know.</label>
               <div class="control">
                 <textarea
                   class="textarea"
