@@ -163,7 +163,17 @@ jobs:
               echo "REDIS_PORT=${{ secrets.REDIS_PORT }}"     >> .env
 
               echo "MEDIA_DISK=${{ secrets.MEDIA_DISK_DEV }}" >> .env
-            echo ''                                           >> .env
+              echo ''                                           >> .env
+
+              echo 'SESSION_DRIVER=database' >> .env
+              echo 'SESSION_LIFETIME=120' >> .env
+              echo 'SESSION_ENCRYPT=true' >> .env
+              echo 'SESSION_PATH=/' >> .env
+              echo 'SESSION_DOMAIN=dev.zbvinvitational.com' >> .env
+              echo 'SESSION_SECURE_COOKIE=true' >> .env
+              echo 'SESSION_SAME_SITE=lax' >> .env
+              echo 'SANCTUM_STATEFUL_DOMAINS=dev.zbvinvitational.com' >> .env
+              echo ''                             >> .env
 
               echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_DEV }}"  >> .env
               echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}"  >> .env
@@ -216,6 +226,16 @@ jobs:
               echo "DB_DATABASE=${{ secrets.DB_PROD_NAME }}"   >> .env
               echo "DB_USERNAME=${{ secrets.DB_PROD_USER }}"   >> .env
               echo "DB_PASSWORD=${{ secrets.DB_PROD_PASSWORD }}" >> .env
+              echo ''                             >> .env
+
+              echo 'SESSION_DRIVER=database' >> .env
+              echo 'SESSION_LIFETIME=120' >> .env
+              echo 'SESSION_ENCRYPT=true' >> .env
+              echo 'SESSION_PATH=/' >> .env
+              echo 'SESSION_DOMAIN=zbvinvitational.com' >> .env
+              echo 'SESSION_SECURE_COOKIE=true' >> .env
+              echo 'SESSION_SAME_SITE=lax' >> .env
+              echo 'SANCTUM_STATEFUL_DOMAINS=zbvinvitational.com' >> .env
               echo ''                             >> .env
 
               echo 'QUEUE_CONNECTION=redis'         >> .env
