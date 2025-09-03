@@ -116,7 +116,7 @@
     },
     {
       headerName: 'Price',
-      field: 'product.price',
+      field: 'unit_price_cents',
       cellRenderer: (params: any) => {
         return `$${(Number.parseInt(params.value) / 100).toFixed(2)}`;
       },
