@@ -5,7 +5,7 @@
         <div>
           <Calendar />
           <span>
-            Our next tournmant is
+            Our next tournament is
             <strong>{{ formattedEventDate ?? 'TBD' }}</strong>
           </span>
         </div>
