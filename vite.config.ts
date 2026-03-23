@@ -36,6 +36,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
+        quietDeps: true,
         additionalData: `
             @use "bulma/sass/utilities/mixins" as mixins;
             @use "~/scss/variables" as *;

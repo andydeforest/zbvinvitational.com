@@ -54,6 +54,7 @@
       flex-direction: column;
       height: calc(100dvh - var(--header-height) - 4rem); // 4rem to account for 2x top/bottom padding
       justify-content: space-between;
+      gap: 1.5rem;
     }
 
     &__panel {
@@ -75,8 +76,8 @@
       &--nav {
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        gap: 1.5rem;
+        justify-content: space-between;
+        height: 100%;
 
         li {
           a {
