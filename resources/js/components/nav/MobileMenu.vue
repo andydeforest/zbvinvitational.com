@@ -52,7 +52,7 @@
     &__container {
       display: flex;
       flex-direction: column;
-      height: calc(100dvh - var(--header-height) - 4rem); // 4rem to account for 2x top/bottom padding
+      height: calc(100dvh - var(--header-height) - 3rem); // 4rem to account for 2x top/bottom padding
       justify-content: space-between;
       gap: 1.5rem;
     }
@@ -78,6 +78,7 @@
         flex-direction: column;
         justify-content: space-between;
         height: 100%;
+        max-height: 550px;
 
         li {
           a {
