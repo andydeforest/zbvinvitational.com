@@ -22,17 +22,18 @@
     {
       question: "What is this year's theme?",
       answer:
-        'Golfing with the stars. Let your imagination run wild! Come dressed as your favorite celebrity, movie star, famous athlete, etc.'
+        "This year's theme is Space Squabbles! This theme is open to interpretation, and we chose it because there are plenty of mainstream inspirations that can be referenced."
     },
     { question: 'Where is the tournament being held?', answer: 'Creekside Golf Course - 701 Lincoln Ave., Modesto' },
     {
       question: "What is included in the day's events?",
       answer:
-        'For 18 hole golfers, we provide breakfast, lunch, dinner (for you and 1 guest), dessert, goody bag, drinks on the course, 18 holes of fun play and cart. For 9 hole players we provide lunch, dinner (for you and 1 guest), dessert, goody bag, drinks on the course, 9 holes of fun play and cart. After play, there will be opportunity to purchase raffle tickets and to bed on some amazing procured items.'
+        'For 18 hole golfers, we provide breakfast, lunch, dinner (for you and 1 guest), dessert, goody bag, drinks on the course, 18 holes of fun play and cart. For 9 hole players we provide lunch, dinner (for you and 1 guest), dessert, goody bag, drinks on the course, 9 holes of fun play and cart. After play, there will be opportunities to purchase raffle tickets and to bet on some amazing procured items.'
     },
     {
       question: "I'm not a golfer, can I just join you for dinner?",
-      answer: 'Absolutely! Dinner is just $15 which includes wine, beer or soda.'
+      answer:
+        'If you are coming with a golfer, your dinner is included in the price of their ticket, and you do not need to purchase a separate "Dinner only" ticket from the Shop.'
     },
     {
       question: 'What is served for lunch and dinner?',

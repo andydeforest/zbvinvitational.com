@@ -28,7 +28,8 @@
     { year: '2021', title: '5th Tournament', amount: '$18,000' },
     { year: '2022', title: '6th Tournament', amount: '$24,300' },
     { year: '2023', title: '7th Tournament', amount: '$27,500' },
-    { year: '2024', title: '8th Tournament', amount: '$46,000' }
+    { year: '2024', title: '8th Tournament', amount: '$46,000' },
+    { year: '2025', title: '9th Tournament', amount: '$41,000' }
   ]);
 
   const formattedMilestones = computed(() => [...milestones.value].reverse());

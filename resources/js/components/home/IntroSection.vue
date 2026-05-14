@@ -8,17 +8,17 @@
         Bondy-Villa, who's companionship and spirit continue to inspire.
       </p>
       <p>
-        Last year we raised another $46,000, bringing our total donations to north of $156,000 since our inception in
+        Last year we raised another $41,000, bringing our total donations to more than $197,000 since our inception in
         2016! Thank you for your continued support, we couldn’t do this without your generosity! This year we will have
-        golf, games, food, prizes, and live music. Like last year, we will be hosting the event at Creekside Golf Course
-        (701 Lincoln Ave, Modesto, CA 95354). Registration opens at 9 AM, and the 18-hole tournament begins with a
-        shotgun start at 10 AM. The 9-hole golfers will begin at 12 PM.
+        golf, games, food, prizes, and music. Like last year, we will be hosting the event at Creekside Golf Course (701
+        Lincoln Ave, Modesto, CA 95354). Registration opens at 9 AM, and the 18-hole tournament begins with a shotgun
+        start at 10 AM. The 9-hole golfers will begin at 12 noon.
       </p>
       <p>
         This year's theme is
-        <strong>Golfing With the Stars.</strong>
-        This theme is open to interpretation so do your best to wow us! Maybe come dressed as your favorite movie star,
-        celebrity,or a famous athlete?
+        <strong>Space Squabbles.</strong>
+        This theme is open to interpretation, but we chose this theme because there are plenty of mainstream
+        inspirations that can be referenced. We look forward to enjoying your creativity!
       </p>
       <p>Registration will open June 1st on a first-come, first-served basis. We hope to see you there!</p>
     </div>
