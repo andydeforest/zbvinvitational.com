@@ -4,8 +4,8 @@
       <div class="base-footer__logos">
         <a href="https://www.guidestar.org/profile/83-2803947" target="_blank">
           <img
-            :src="`/images/guidestar.jpg?cachebust=${new Date().getFullYear()}`"
-            alt="Gold Transparency award from Guidestar."
+            :src="`/images/guidestar-platinum.jpg?cachebust=${new Date().getFullYear()}`"
+            alt="Platinum Transparency award from Guidestar."
           />
         </a>
         <Link href="#">
