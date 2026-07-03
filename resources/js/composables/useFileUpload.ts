@@ -14,6 +14,7 @@ export interface UseFileUploadOptions {
   fieldName?: string;
   multiple?: boolean;
   extraData?: () => Record<string, any> | Record<string, any>;
+  headers?: Record<string, string>;
   batchSize?: number;
   concurrentBatches?: number;
   onCompleted?: Function;
@@ -47,6 +48,32 @@ function normalizeUploadError(error: any): string {
   return error.message || 'Upload failed.';
 }
 
+function isGalleryItem(item: unknown): item is GalleryItem {
+  if (!item || typeof item !== 'object') {
+    return false;
+  }
+
+  const candidate = item as Partial<GalleryItem>;
+
+  return typeof candidate.id === 'number' && typeof candidate.year === 'number';
+}
+
+function parseUploadResponse(response: any): GalleryItem[] {
+  const contentType = response.headers?.['content-type'];
+
+  if (typeof contentType === 'string' && contentType.includes('text/html')) {
+    throw new Error('Upload session expired. Please refresh the page and sign in again.');
+  }
+
+  const payload = response.data?.data ?? response.data;
+
+  if (!Array.isArray(payload) || !payload.every(isGalleryItem)) {
+    throw new Error('Unexpected upload response from the server.');
+  }
+
+  return payload;
+}
+
 export function useFileUpload(opts: UseFileUploadOptions) {
   const selected = ref<File[]>([]);
   const uploading = ref(false);
@@ -59,7 +86,11 @@ export function useFileUpload(opts: UseFileUploadOptions) {
   const concurrentBatches = opts.concurrentBatches ?? 1;
 
   const token = import.meta.env.VITE_ADMIN_TOKEN;
-  const uploadHeaders = { Authorization: `Bearer ${token}` };
+
+  const uploadHeaders = {
+    ...(opts.headers ?? {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {})
+  };
 
   function onSelect(evt: any) {
     selected.value = evt.files as File[];
@@ -84,7 +115,7 @@ export function useFileUpload(opts: UseFileUploadOptions) {
       }
     });
 
-    return (res.data.data ?? res.data) as GalleryItem[];
+    return parseUploadResponse(res);
   }
 
   async function upload() {

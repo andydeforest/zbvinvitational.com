@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
+  import { ref } from 'vue';
   import FileUpload from 'primevue/fileupload';
   import type { PropType } from 'vue';
   import { useFileUpload, UseFileUploadOptions } from '@/composables/useFileUpload';
@@ -55,6 +55,7 @@
   const opts: UseFileUploadOptions = {
     url: props.url,
     fieldName: props.fieldName,
+    headers: props.headers,
     multiple: props.multiple,
     extraData: () => props.customData,
     onCompleted: (files: GalleryItem[]) => {

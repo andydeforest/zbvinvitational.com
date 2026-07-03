@@ -17,6 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->statefulApi();
+
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
@@ -27,6 +29,12 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function ($exceptions) {
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
             if ($exception instanceof AuthenticationException) {
+                if ($request->expectsJson() || $request->is('api/*')) {
+                    return response()->json([
+                        'message' => 'Unauthenticated.',
+                    ], 401);
+                }
+
                 return redirect()->guest(route('login'));
             }
 
