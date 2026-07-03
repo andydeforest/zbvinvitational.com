@@ -3,7 +3,10 @@
     <BaseSection class="base-footer__section">
       <div class="base-footer__logos">
         <a href="https://www.guidestar.org/profile/83-2803947" target="_blank">
-          <img :src="'/images/guidestar.jpg'" alt="Gold Transparency award from Guidestar." />
+          <img
+            :src="`/images/guidestar-platinum.jpg?cachebust=${new Date().getFullYear()}`"
+            alt="Platinum Transparency award from Guidestar."
+          />
         </a>
         <Link href="#">
           <img :src="'/images/logo-small-light.png'" alt="ZBV logo." />
