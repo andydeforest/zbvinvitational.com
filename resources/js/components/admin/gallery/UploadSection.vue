@@ -1,25 +1,23 @@
 <template>
   <AdminBaseSection class="admin-gallery-upload-section" title="Upload Gallery Photos">
-    <form @submit.prevent="submitUpload">
-      <div class="field is-size-4">
-        <label class="label">Upload to Gallery</label>
-        <div class="control">
-          <div class="select">
-            <select v-model="form.year">
-              <option v-for="y in availableYears" :key="y" :value="y">{{ y }}</option>
-            </select>
-          </div>
+    <div class="field is-size-4">
+      <label class="label">Upload to Gallery</label>
+      <div class="control">
+        <div class="select">
+          <select v-model="selectedYear">
+            <option v-for="y in availableYears" :key="y" :value="y">{{ y }}</option>
+          </select>
         </div>
       </div>
-      <AdminBaseMultifileUpload
-        :customUpload="true"
-        :multiple="true"
-        accept="image/*"
-        url="/api/gallery"
-        :custom-data="{ year: form.year }"
-        @uploaded="onUploaded"
-      />
-    </form>
+    </div>
+    <AdminBaseMultifileUpload
+      :customUpload="true"
+      :multiple="true"
+      accept="image/*"
+      url="/api/gallery"
+      :custom-data="{ year: selectedYear }"
+      @uploaded="onUploaded"
+    />
     <AdminBaseMediaManager
       class="admin-gallery-upload-section__media"
       :items="selectedGallery"
@@ -32,7 +30,7 @@
         <img :src="item.media.original_url" :alt="`Donor logo ${item.id}.`" />
       </template>
       <template #empty>
-        <p class="has-text-grey-light">No {{ form.year }} images yet.</p>
+        <p class="has-text-grey-light">No {{ selectedYear }} images yet.</p>
       </template>
     </AdminBaseMediaManager>
   </AdminBaseSection>
@@ -40,7 +38,6 @@
 
 <script setup lang="ts">
   import { ref, computed } from 'vue';
-  import { useForm } from '@inertiajs/vue3';
   import axios from 'axios';
 
   const props = defineProps<{
@@ -54,7 +51,7 @@
   const selectedGallery = computed(() => {
     return photoList.value
       .filter((photo: GalleryItem) => {
-        return photo.year === form.year && photo.media.length > 0;
+        return photo.year === selectedYear.value && photo.media.length > 0;
       })
       .map((photo: GalleryItem) => ({
         id: photo.id,
@@ -76,10 +73,7 @@
     mediaLoading.value = false;
   }
 
-  const form = useForm({
-    year: new Date().getFullYear(),
-    files: []
-  });
+  const selectedYear = ref(new Date().getFullYear());
 
   const onUploaded = (files: GalleryItem[]) => {
     mediaLoading.value = true;
@@ -101,15 +95,6 @@
     }
     return years;
   });
-
-  function submitUpload() {
-    form.post('/admin/gallery', {
-      forceFormData: true,
-      onSuccess: () => {
-        form.reset('files');
-      }
-    });
-  }
 </script>
 
 <style lang="scss">

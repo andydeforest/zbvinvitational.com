@@ -86,6 +86,22 @@ class GalleryControllerTest extends TestCase
     }
 
     #[Test]
+    public function store_accepts_gallery_images_up_to_the_media_library_limit(): void
+    {
+        $file = UploadedFile::fake()->image('large-gallery-photo.jpg', 2400, 1800)->size(8 * 1024);
+
+        $response = $this->post('/api/gallery', [
+            'year' => now()->year,
+            'files' => [$file],
+        ]);
+
+        $response->assertCreated()
+            ->assertJsonCount(1, 'data');
+
+        $this->assertDatabaseCount('photos', 1);
+    }
+
+    #[Test]
     public function destroy_deletes_single_photo_and_its_media(): void
     {
         $photo = Photo::create(['year' => now()->year]);

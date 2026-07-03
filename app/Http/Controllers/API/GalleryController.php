@@ -13,10 +13,12 @@ class GalleryController extends Controller
 {
     public function store(Request $request)
     {
+        $maxUploadKilobytes = (int) ceil(((int) config('media-library.max_file_size', 10 * 1024 * 1024)) / 1024);
+
         $validated = $request->validate([
             'year' => ['required', 'integer', 'min:2018', 'max:'.now()->year],
             'files' => ['required', 'array'],
-            'files.*' => ['file', 'image', 'max:5120'], // max 5 MB each
+            'files.*' => ['file', 'image', "max:{$maxUploadKilobytes}"],
         ]);
 
         /** @var UploadedFile[] $files */

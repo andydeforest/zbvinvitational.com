@@ -27,6 +27,26 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   return chunks;
 }
 
+function normalizeUploadError(error: any): string {
+  const validationErrors = error.response?.data?.errors;
+
+  if (validationErrors && typeof validationErrors === 'object') {
+    const firstError = Object.values(validationErrors)
+      .flat()
+      .find((message) => typeof message === 'string');
+
+    if (typeof firstError === 'string') {
+      return firstError;
+    }
+  }
+
+  if (typeof error.response?.data?.message === 'string') {
+    return error.response.data.message;
+  }
+
+  return error.message || 'Upload failed.';
+}
+
 export function useFileUpload(opts: UseFileUploadOptions) {
   const selected = ref<File[]>([]);
   const uploading = ref(false);
@@ -88,19 +108,15 @@ export function useFileUpload(opts: UseFileUploadOptions) {
           uploaded.value.push(...chunkResult);
         });
       }
+
       selected.value = [];
-    } catch (e: any) {
-      if (e.response?.data?.message) {
-        error.value = e.response.data.message;
-      } else if (e.response?.data?.errors) {
-        error.value = JSON.stringify(e.response.data.errors);
-      } else {
-        error.value = e.message || 'Upload failed.';
-      }
-    } finally {
+
       if (typeof opts.onCompleted === 'function') {
         opts.onCompleted(uploaded.value);
       }
+    } catch (e: any) {
+      error.value = normalizeUploadError(e);
+    } finally {
       uploading.value = false;
     }
   }
