@@ -5,15 +5,19 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DonorLogoResource;
 use App\Models\Assets\DonorLogo;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Throwable;
 
 class DonorLogoController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
+            'files' => 'required|array|min:1',
             'files.*' => 'required|image|max:5120',
         ]);
 
@@ -22,21 +26,41 @@ class DonorLogoController extends Controller
 
         $created = [];
 
-        foreach ($files as $file) {
+        try {
+            foreach ($files as $file) {
+                $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $extension = $file->getClientOriginalExtension();
+                $uniqueName = $originalName.'-'.time().'-'.Str::random(6).".{$extension}";
 
-            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $extension = $file->getClientOriginalExtension();
-            $uniqueName = $originalName.'-'.time().'-'.Str::random(6).".{$extension}";
+                $logo = DonorLogo::create([
+                    'name' => $uniqueName,
+                ]);
 
-            $logo = DonorLogo::create([
-                'name' => $uniqueName,
+                $logo->addMedia($file)
+                    ->usingFileName($uniqueName)
+                    ->toMediaCollection('donors');
+
+                $created[] = $logo;
+            }
+        } catch (Throwable $exception) {
+            foreach ($created as $logo) {
+                $logo->delete();
+            }
+
+            Log::error('Donor logo upload failed.', [
+                'message' => $exception->getMessage(),
+                'exception' => $exception,
+                'disk' => config('media-library.disk_name'),
+                'user_id' => $request->user()?->id,
+                'file_names' => array_map(
+                    static fn (UploadedFile $file): string => $file->getClientOriginalName(),
+                    $files
+                ),
             ]);
 
-            $logo->addMedia($file)
-                ->usingFileName($uniqueName)
-                ->toMediaCollection('donors');
-
-            $created[] = $logo;
+            return response()->json([
+                'message' => 'Donor logo upload failed: '.$exception->getMessage(),
+            ], 500);
         }
 
         return DonorLogoResource::collection($created)
