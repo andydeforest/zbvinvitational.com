@@ -60,7 +60,17 @@ function parseUploadResponse(response: any): UploadedResource[] {
   const contentType = response.headers?.['content-type'];
 
   if (typeof contentType === 'string' && contentType.includes('text/html')) {
-    throw new Error('Upload session expired. Please refresh the page and sign in again.');
+    const status = response.status;
+
+    if (status === 401 || status === 419) {
+      throw new Error('Upload session expired. Please refresh the page and sign in again.');
+    }
+
+    if (status >= 500) {
+      throw new Error('Upload failed on the server. Please try again in a moment.');
+    }
+
+    throw new Error(`Upload failed (HTTP ${status}).`);
   }
 
   const payload = response.data?.data ?? response.data;

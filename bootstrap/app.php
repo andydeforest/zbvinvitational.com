@@ -4,6 +4,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,14 +29,40 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function ($exceptions) {
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
+            $expectsJson = $request->expectsJson() || $request->is('api/*');
+
             if ($exception instanceof AuthenticationException) {
-                if ($request->expectsJson() || $request->is('api/*')) {
+                if ($expectsJson) {
                     return response()->json([
                         'message' => 'Unauthenticated.',
                     ], 401);
                 }
 
                 return redirect()->guest(route('login'));
+            }
+
+            if ($expectsJson) {
+                if ($exception instanceof ValidationException) {
+                    return null;
+                }
+
+                if ($exception instanceof TokenMismatchException) {
+                    return response()->json([
+                        'message' => 'Your session has expired. Please refresh the page and try again.',
+                    ], 419);
+                }
+
+                $status = $exception instanceof HttpExceptionInterface
+                    ? $exception->getStatusCode()
+                    : 500;
+
+                $message = $status >= 500
+                    ? (config('app.debug') ? $exception->getMessage() : 'Server Error')
+                    : ($exception->getMessage() ?: (Response::$statusTexts[$status] ?? 'Request failed.'));
+
+                return response()->json([
+                    'message' => $message,
+                ], $status);
             }
 
             // bail out and let default behavior handle certain exceptions
