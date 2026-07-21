@@ -105,6 +105,25 @@ class GalleryControllerTest extends TestCase
     }
 
     #[Test]
+    public function store_cleans_up_created_photos_when_media_storage_fails(): void
+    {
+        config()->set('media-library.disk_name', 'missing-disk');
+
+        $response = $this->post('/api/gallery', [
+            'year' => now()->year,
+            'files' => [UploadedFile::fake()->image('broken-upload.jpg')],
+        ]);
+
+        $response->assertStatus(500)
+            ->assertJson([
+                'message' => 'Gallery upload failed: There is no filesystem disk named `missing-disk`',
+            ]);
+
+        $this->assertDatabaseCount('photos', 0);
+        $this->assertDatabaseCount('media', 0);
+    }
+
+    #[Test]
     public function destroy_deletes_single_photo_and_its_media(): void
     {
         $photo = Photo::create(['year' => now()->year]);

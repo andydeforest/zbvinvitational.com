@@ -36,11 +36,11 @@ class DonorLogoController extends Controller
                     'name' => $uniqueName,
                 ]);
 
+                $created[] = $logo;
+
                 $logo->addMedia($file)
                     ->usingFileName($uniqueName)
                     ->toMediaCollection('donors');
-
-                $created[] = $logo;
             }
         } catch (Throwable $exception) {
             foreach ($created as $logo) {
