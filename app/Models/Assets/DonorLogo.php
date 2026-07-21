@@ -30,7 +30,7 @@ class DonorLogo extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('donors')
-            ->useDisk('s3');
+            ->useDisk((string) config('media-library.disk_name', config('filesystems.default', 'public')));
     }
 
     public function registerMediaConversions(?Media $media = null): void {}

@@ -13,11 +13,14 @@ class DonorsPageTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected string $mediaDisk;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        Storage::fake('s3');
+        $this->mediaDisk = (string) config('media-library.disk_name', 'public');
+        Storage::fake($this->mediaDisk);
     }
 
     #[Test]

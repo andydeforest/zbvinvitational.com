@@ -15,11 +15,14 @@ class DonorLogoControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected string $mediaDisk;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        Storage::fake('s3');
+        $this->mediaDisk = (string) config('media-library.disk_name', 'public');
+        Storage::fake($this->mediaDisk);
         $user = User::factory()->create();
         Sanctum::actingAs($user, ['*']);
     }
@@ -27,7 +30,7 @@ class DonorLogoControllerTest extends TestCase
     #[Test]
     public function store_creates_logos_and_stores_files_on_s3()
     {
-        Storage::fake('s3');
+        Storage::fake($this->mediaDisk);
 
         $file1 = UploadedFile::fake()->image('logo1.jpg');
         $file2 = UploadedFile::fake()->image('logo2.png');
@@ -40,7 +43,7 @@ class DonorLogoControllerTest extends TestCase
         $response->assertStatus(201)
             ->assertJsonCount(2, 'data');
 
-        $disk = config('medialibrary.disk_name', 's3');
+        $disk = config('media-library.disk_name', 'public');
 
         $this->assertDatabaseCount('donor_logos', 2);
 

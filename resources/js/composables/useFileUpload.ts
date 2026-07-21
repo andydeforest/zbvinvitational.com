@@ -2,11 +2,9 @@
 import { ref } from 'vue';
 import axios from 'axios';
 
-export interface GalleryItem {
+export interface UploadedResource {
   id: number;
-  year: number;
-  url: string;
-  media: any;
+  [key: string]: unknown;
 }
 
 export interface UseFileUploadOptions {
@@ -48,17 +46,17 @@ function normalizeUploadError(error: any): string {
   return error.message || 'Upload failed.';
 }
 
-function isGalleryItem(item: unknown): item is GalleryItem {
+function isUploadedResource(item: unknown): item is UploadedResource {
   if (!item || typeof item !== 'object') {
     return false;
   }
 
-  const candidate = item as Partial<GalleryItem>;
+  const candidate = item as Partial<UploadedResource>;
 
-  return typeof candidate.id === 'number' && typeof candidate.year === 'number';
+  return typeof candidate.id === 'number';
 }
 
-function parseUploadResponse(response: any): GalleryItem[] {
+function parseUploadResponse(response: any): UploadedResource[] {
   const contentType = response.headers?.['content-type'];
 
   if (typeof contentType === 'string' && contentType.includes('text/html')) {
@@ -67,7 +65,7 @@ function parseUploadResponse(response: any): GalleryItem[] {
 
   const payload = response.data?.data ?? response.data;
 
-  if (!Array.isArray(payload) || !payload.every(isGalleryItem)) {
+  if (!Array.isArray(payload) || !payload.every(isUploadedResource)) {
     throw new Error('Unexpected upload response from the server.');
   }
 
@@ -78,7 +76,7 @@ export function useFileUpload(opts: UseFileUploadOptions) {
   const selected = ref<File[]>([]);
   const uploading = ref(false);
   const error = ref<string | null>(null);
-  const uploaded = ref<GalleryItem[]>([]);
+  const uploaded = ref<UploadedResource[]>([]);
 
   const fieldName = opts.fieldName || 'files';
   const multiple = opts.multiple ?? true;
@@ -97,7 +95,7 @@ export function useFileUpload(opts: UseFileUploadOptions) {
     error.value = null;
   }
 
-  async function uploadChunk(filesBatch: File[]): Promise<GalleryItem[]> {
+  async function uploadChunk(filesBatch: File[]): Promise<UploadedResource[]> {
     const form = new FormData();
     filesBatch.forEach((f) => form.append(`${fieldName}[]`, f));
 

@@ -26,7 +26,7 @@ class Photo extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('gallery')
-            ->useDisk('s3');
+            ->useDisk((string) config('media-library.disk_name', config('filesystems.default', 'public')));
     }
 
     public function getUrlAttribute(): ?string

@@ -15,11 +15,14 @@ class GalleryControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected string $mediaDisk;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        Storage::fake('s3');
+        $this->mediaDisk = (string) config('media-library.disk_name', 'public');
+        Storage::fake($this->mediaDisk);
         $user = User::factory()->create();
         Sanctum::actingAs($user, ['*']);
     }
@@ -52,7 +55,7 @@ class GalleryControllerTest extends TestCase
             $media = $photo->getFirstMedia('gallery');
             $this->assertNotNull($media, "Expected each Photo to have one media item in 'gallery'.");
 
-            // use getPathRelativeToRoot() to get path relative to the s3 disk root
+            // use getPathRelativeToRoot() to get path relative to the media disk root
             $relativePath = $media->getPathRelativeToRoot();
             $this->assertStringStartsWith(
                 "gallery/{$year}/",
@@ -60,7 +63,7 @@ class GalleryControllerTest extends TestCase
                 "Expected media path to start with \"gallery/{$year}/\", got \"{$relativePath}\"."
             );
 
-            Storage::disk('s3')->assertExists($relativePath);
+            Storage::disk($this->mediaDisk)->assertExists($relativePath);
         }
 
         $response->assertJsonFragment([
@@ -112,7 +115,7 @@ class GalleryControllerTest extends TestCase
 
         $media = $photo->getFirstMedia('gallery');
         $relativePath = $media->getPathRelativeToRoot();
-        Storage::disk('s3')->assertExists($relativePath);
+        Storage::disk($this->mediaDisk)->assertExists($relativePath);
 
         $response = $this->deleteJson("/api/gallery/{$photo->id}");
 
@@ -122,13 +125,14 @@ class GalleryControllerTest extends TestCase
 
         $this->assertDatabaseMissing('photos', ['id' => $photo->id]);
 
-        Storage::disk('s3')->assertMissing($relativePath);
+        Storage::disk($this->mediaDisk)->assertMissing($relativePath);
     }
 
     #[Test]
     public function bulk_destroy_deletes_multiple_photos_and_media(): void
     {
         $photos = collect();
+        $relativePaths = [];
 
         for ($i = 0; $i < 3; $i++) {
             $p = Photo::create(['year' => now()->year]);
@@ -141,7 +145,8 @@ class GalleryControllerTest extends TestCase
             $this->assertNotNull($media, "Expected media for Photo ID {$p->id}.");
 
             $relativePath = $media->getPathRelativeToRoot();
-            Storage::disk('s3')->assertExists($relativePath);
+            Storage::disk($this->mediaDisk)->assertExists($relativePath);
+            $relativePaths[] = $relativePath;
 
             $photos->push($p);
         }
@@ -159,12 +164,8 @@ class GalleryControllerTest extends TestCase
             $this->assertDatabaseMissing('photos', ['id' => $id]);
         }
 
-        foreach ($photos as $photo) {
-            $media = $photo->getFirstMedia('gallery');
-            if ($media) {
-                $relativePath = $media->getPathRelativeToRoot();
-                Storage::disk('s3')->assertMissing($relativePath);
-            }
+        foreach ($relativePaths as $relativePath) {
+            Storage::disk($this->mediaDisk)->assertMissing($relativePath);
         }
     }
 }
