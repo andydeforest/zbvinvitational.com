@@ -288,6 +288,7 @@
   import { useCheckoutValidation } from '@/composables/useCheckoutValidation';
   import { router } from '@inertiajs/vue3';
   import { nextTick } from 'vue';
+  import axios from 'axios';
 
   const cart = useCartStore();
 
@@ -363,9 +364,7 @@
   async function cancelPayment() {
     if (orderId.value) {
       try {
-        await fetch(`/api/orders/${orderId.value}`, {
-          method: 'DELETE'
-        });
+        await axios.delete(`/api/orders/${orderId.value}`);
       } catch (e) {
         console.error('Order deletion failed', e);
       }
