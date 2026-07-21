@@ -31,12 +31,14 @@
     logos: DonorLogo[];
   }>();
 
-  const logosList = ref<DonorLogo[]>([...props.logos]);
+  const hasMedia = (logo: DonorLogo): logo is DonorLogo & { media: MediaItem } => logo.media !== null;
+
+  const logosList = ref<Array<DonorLogo & { media: MediaItem }>>(props.logos.filter(hasMedia));
   const selectedForDeletion = ref<number[]>([]);
   const logosLoading = ref(false);
 
   const onUploaded = (files: DonorLogo[]) => {
-    logosList.value.unshift(...files);
+    logosList.value.unshift(...files.filter(hasMedia));
   };
 
   async function deleteLogo(id: number) {

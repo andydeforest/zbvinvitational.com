@@ -69,7 +69,7 @@ class DonorLogoControllerTest extends TestCase
     {
         $logo = DonorLogo::factory()->create();
         $logo->addMedia(UploadedFile::fake()->image('to-delete.jpg'))
-            ->toMediaCollection();
+            ->toMediaCollection('donors');
 
         $this->assertDatabaseHas('donor_logos', ['id' => $logo->id]);
         $this->assertDatabaseCount('media', 1);
@@ -87,7 +87,7 @@ class DonorLogoControllerTest extends TestCase
     {
         $logos = DonorLogo::factory()->count(3)->create()->each(function ($logo) {
             $logo->addMedia(UploadedFile::fake()->image("logo{$logo->id}.png"))
-                ->toMediaCollection();
+                ->toMediaCollection('donors');
         });
 
         $idsToDelete = $logos->pluck('id')->take(2)->all();

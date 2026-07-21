@@ -12,7 +12,7 @@ class DonorLogoResource extends JsonResource
     public function toArray($request): array
     {
         // DonorLogos will only have one media type, so we'll flatten the media array
-        $media = $this->media->first();
+        $media = $this->getFirstMedia('donors');
 
         return [
             'id' => $this->id,

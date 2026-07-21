@@ -2,6 +2,7 @@
 
 namespace App\Models\Assets;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
@@ -13,6 +14,11 @@ class DonorLogo extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
     protected $fillable = ['name'];
+
+    public function scopeWithAttachedMedia(Builder $query): Builder
+    {
+        return $query->whereHas('media');
+    }
 
     protected static function booted(): void
     {

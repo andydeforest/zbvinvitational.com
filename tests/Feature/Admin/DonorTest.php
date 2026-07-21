@@ -2,15 +2,25 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Models\Assets\DonorLogo;
 use App\Models\Donor;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class DonorTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Storage::fake('s3');
+    }
 
     protected function authenticate(): void
     {
@@ -73,5 +83,29 @@ class DonorTest extends TestCase
         foreach ($donors as $donor) {
             $this->assertDatabaseMissing('donors', ['id' => $donor->id]);
         }
+    }
+
+    #[Test]
+    public function it_only_returns_donor_logos_that_have_media_for_the_admin_page()
+    {
+        $this->authenticate();
+
+        $logoWithMedia = DonorLogo::factory()->create();
+        $logoWithMedia->addMediaFromString('logo-content')
+            ->usingFileName('logo.png')
+            ->toMediaCollection('donors');
+
+        $logoWithoutMedia = DonorLogo::factory()->create();
+
+        $response = $this->get(route('admin.donors.index'));
+
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('Admin/Donors/Index')
+            ->has('logos.data', 1)
+            ->where('logos.data.0.id', $logoWithMedia->id)
+            ->missing("logos.data.1")
+        );
+
+        $this->assertDatabaseHas('donor_logos', ['id' => $logoWithoutMedia->id]);
     }
 }

@@ -21,7 +21,13 @@
   }>();
 
   const imageUrls = computed<string[]>(() =>
-    props.logos.map((l) => (typeof l === 'string' ? l : l.media.original_url))
+    props.logos.flatMap((logo) => {
+      if (typeof logo === 'string') {
+        return [logo];
+      }
+
+      return logo.media?.original_url ? [logo.media.original_url] : [];
+    })
   );
 
   const carouselRoot = ref<HTMLElement | null>(null);

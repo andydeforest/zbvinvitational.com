@@ -68,7 +68,8 @@ class PagesController extends Controller
     public function donors()
     {
         $individuals = Donor::orderBy('name', 'ASC')->get();
-        $logos = DonorLogo::with('media')
+        $logos = DonorLogo::withAttachedMedia()
+            ->with('media')
             ->get();
 
         return Inertia::render('Public/Donors', [
