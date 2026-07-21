@@ -14,7 +14,8 @@ class DonorController extends Controller
 {
     public function index()
     {
-        $logos = DonorLogo::with('media')
+        $logos = DonorLogo::withAttachedMedia()
+            ->with('media')
             ->get();
 
         return Inertia::render('Admin/Donors/Index', [

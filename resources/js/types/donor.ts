@@ -8,5 +8,5 @@ export interface DonorLogo {
   name: string;
   created_at: string;
   updated_at: string;
-  media: MediaItem;
+  media: MediaItem | null;
 }
