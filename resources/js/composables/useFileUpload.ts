@@ -107,8 +107,10 @@ export function useFileUpload(opts: UseFileUploadOptions) {
     }
 
     const res = await axios.post(opts.url, form, {
+      withCredentials: true,
       headers: {
-        'Content-Type': 'multipart/form-data',
+        Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
         ...uploadHeaders
       }
     });
