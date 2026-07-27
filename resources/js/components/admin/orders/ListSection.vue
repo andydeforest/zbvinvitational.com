@@ -111,14 +111,20 @@
       headerName: 'Item',
       field: 'product.type',
       cellRenderer: (params: any) => {
-        return uppercaseFirst(params.value);
+        let str = uppercaseFirst(params.value);
+
+        if (params.data.quantity > 1) {
+          str += ` (x ${params.data.quantity})`;
+        }
+
+        return str;
       }
     },
     {
       headerName: 'Price',
       field: 'unit_price_cents',
       cellRenderer: (params: any) => {
-        return `$${(Number.parseInt(params.value) / 100).toFixed(2)}`;
+        return `$${((Number.parseInt(params.value) * Number.parseInt(params.data.quantity)) / 100).toFixed(2)}`;
       },
       flex: 1
     },

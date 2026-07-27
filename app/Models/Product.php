@@ -86,7 +86,7 @@ class Product extends Model
 
     public function getCoverImageUrlAttribute()
     {
-        if (! $this->cover_image) {
+        if (! $this->cover_image || ! config('filesystems.disks.s3.bucket')) {
             return null;
         }
 
