@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\Donor\UpdateDonorRequest;
 use App\Http\Resources\DonorLogoResource;
 use App\Models\Assets\DonorLogo;
 use App\Models\Donor;
+use App\Support\DonorPageData;
 use Inertia\Inertia;
 
 class DonorController extends Controller
@@ -35,6 +36,8 @@ class DonorController extends Controller
         foreach ($donors as $donor) {
             Donor::create($donor);
         }
+
+        DonorPageData::flush();
 
         return redirect()
             ->route('admin.donors.index')
@@ -70,6 +73,8 @@ class DonorController extends Controller
                 Donor::create(['name' => $entry['name']]);
             }
         }
+
+        DonorPageData::flush();
 
         return redirect()
             ->route('admin.donors.index')

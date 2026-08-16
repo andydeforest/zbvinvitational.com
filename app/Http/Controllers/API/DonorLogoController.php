@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DonorLogoResource;
 use App\Models\Assets\DonorLogo;
+use App\Support\DonorPageData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -42,6 +43,8 @@ class DonorLogoController extends Controller
                     ->usingFileName($uniqueName)
                     ->toMediaCollection('donors');
             }
+
+            DonorPageData::flush();
         } catch (Throwable $exception) {
             foreach ($created as $logo) {
                 $logo->delete();
@@ -91,6 +94,7 @@ class DonorLogoController extends Controller
     protected function deleteAndRespond(array $ids)
     {
         DonorLogo::destroy($ids);
+        DonorPageData::flush();
 
         return response()->json([
             'deleted' => $ids,

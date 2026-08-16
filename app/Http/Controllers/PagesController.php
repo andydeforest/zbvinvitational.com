@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\DonorLogoResource;
-use App\Models\Assets\DonorLogo;
 use App\Models\Assets\Photo;
-use App\Models\Donor;
+use App\Support\DonorPageData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -67,14 +65,11 @@ class PagesController extends Controller
 
     public function donors()
     {
-        $individuals = Donor::orderBy('name', 'ASC')->get();
-        $logos = DonorLogo::withAttachedMedia()
-            ->with('media')
-            ->get();
-
         return Inertia::render('Public/Donors', [
-            'individuals' => $individuals,
-            'logos' => DonorLogoResource::collection($logos->shuffle()),
+            'individuals' => DonorPageData::individuals(),
+            'logos' => [
+                'data' => collect(DonorPageData::logos())->shuffle()->values(),
+            ],
         ]);
     }
 
