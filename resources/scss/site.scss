@@ -95,3 +95,23 @@ html {
   opacity: 1;
   transform: translateY(0);
 }
+
+.page-transition-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    background-color: #fff;
+    opacity: 0;
+    transition: opacity 180ms ease-in-out;
+}
+
+.page-transition-overlay.is-active {
+    opacity: 0.72;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-transition-overlay {
+        transition: none;
+    }
+}

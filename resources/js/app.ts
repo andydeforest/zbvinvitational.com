@@ -4,14 +4,14 @@ import 'swiper/css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import 'vue-toast-notification/dist/theme-sugar.css';
 
-import { createApp, h } from 'vue';
+import { createApp, h, ref } from 'vue';
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createInertiaApp, router } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue, route } from '../../vendor/tightenco/ziggy';
 import { registerGlobalComponents } from './plugins/auto-register-components';
@@ -30,7 +30,31 @@ createInertiaApp({
       (module: any) => module.default
     ),
   setup({ el, App, props, plugin }) {
-    const app = createApp({ render: () => h(App, props) })
+    const app = createApp({
+      setup() {
+        const isPageTransitioning = ref(false);
+        let transitionTimer: ReturnType<typeof window.setTimeout>;
+
+        router.on('start', () => {
+          window.clearTimeout(transitionTimer);
+          isPageTransitioning.value = true;
+        });
+
+        router.on('finish', () => {
+          transitionTimer = window.setTimeout(() => {
+            isPageTransitioning.value = false;
+          }, 120);
+        });
+
+        return () => [
+          h(App, props),
+          h('div', {
+            class: ['page-transition-overlay', { 'is-active': isPageTransitioning.value }],
+            'aria-hidden': 'true'
+          })
+        ];
+      }
+    })
       .use(plugin)
       .use(ZiggyVue)
       .use(PrimeVue, {
