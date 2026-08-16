@@ -13,11 +13,6 @@
     <div>
       <DonorsLogoCarousel :logos="logos" />
     </div>
-    <div class="donors-list-section__static">
-      <a href="https://letsroam.com/" target="_blank">
-        <img :src="'/images/donors/lets-roam.png'" alt="Let's Roam logo." />
-      </a>
-    </div>
     <div class="donors-list-section__individuals">
       <h3 class="subtitle" v-for="(donor, x) in donors" :key="`individual-donor-${x}`">
         {{ donor.name }}
@@ -38,6 +33,7 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    padding-bottom: 0 !important;
 
     &__static {
       display: flex;
@@ -56,10 +52,6 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 0.5rem;
-
-      @include mixins.desktop {
-        margin-top: 1rem;
-      }
 
       .subtitle {
         font-size: 16px !important;
