@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Assets\Photo;
 use App\Support\DonorPageData;
+use App\Support\GalleryPageData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -41,7 +41,7 @@ class PagesController extends Controller
 
     public function gallery(Request $request)
     {
-        $years = Photo::availableYears();
+        $years = GalleryPageData::years();
 
         /** @var string|null $yearParam */
         $yearParam = $request->get('year');
@@ -54,12 +54,18 @@ class PagesController extends Controller
             ? $requestedYear
             : (string) $years->first();
 
-        $images = Photo::imagesForYear($activeYear);
+        $galleryPage = GalleryPageData::imagesForYear($activeYear);
 
         return Inertia::render('Public/Gallery', [
             'years' => $years,
             'activeYear' => $activeYear,
-            'images' => $images,
+            'images' => $galleryPage['data'],
+            'galleryPagination' => [
+                'current_page' => $galleryPage['current_page'],
+                'next_page' => $galleryPage['next_page'],
+                'has_more' => $galleryPage['has_more'],
+                'total' => $galleryPage['total'],
+            ],
         ]);
     }
 

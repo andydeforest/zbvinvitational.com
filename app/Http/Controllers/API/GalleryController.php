@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PhotoResource;
 use App\Models\Assets\Photo;
+use App\Support\GalleryPageData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -14,6 +15,21 @@ use Throwable;
 
 class GalleryController extends Controller
 {
+    public function index(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'year' => ['required', 'integer', 'min:2018', 'max:'.now()->year],
+            'page' => ['sometimes', 'integer', 'min:1'],
+        ]);
+
+        $page = GalleryPageData::imagesForYear(
+            (string) $validated['year'],
+            (int) ($validated['page'] ?? 1)
+        );
+
+        return response()->json($page);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $maxUploadKilobytes = (int) ceil(((int) config('media-library.max_file_size', 10 * 1024 * 1024)) / 1024);
@@ -48,6 +64,8 @@ class GalleryController extends Controller
 
                 $photo->load('media');
             }
+
+            GalleryPageData::flush();
         } catch (Throwable $exception) {
             foreach ($created as $photo) {
                 $photo->delete();
@@ -94,11 +112,12 @@ class GalleryController extends Controller
 
     /**
      * @param  int[]  $ids
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     protected function deleteAndRespond(array $ids)
     {
         Photo::destroy($ids);
+        GalleryPageData::flush();
 
         return response()->json([
             'deleted' => $ids,

@@ -28,6 +28,35 @@ class GalleryControllerTest extends TestCase
     }
 
     #[Test]
+    public function index_returns_gallery_images_in_pages(): void
+    {
+        $year = now()->year;
+
+        for ($i = 0; $i < 25; $i++) {
+            $photo = Photo::create(['year' => $year]);
+            $photo->addMedia(UploadedFile::fake()->image("gallery-{$i}.jpg")->size(100))
+                ->usingFileName("gallery-{$i}.jpg")
+                ->toMediaCollection('gallery');
+        }
+
+        $this->getJson("/api/gallery?year={$year}")
+            ->assertOk()
+            ->assertJsonCount(24, 'data')
+            ->assertJsonPath('current_page', 1)
+            ->assertJsonPath('next_page', 2)
+            ->assertJsonPath('has_more', true)
+            ->assertJsonPath('total', 25);
+
+        $this->getJson("/api/gallery?year={$year}&page=2")
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('current_page', 2)
+            ->assertJsonPath('next_page', null)
+            ->assertJsonPath('has_more', false)
+            ->assertJsonPath('total', 25);
+    }
+
+    #[Test]
     public function store_creates_photos_and_stores_files_on_s3(): void
     {
         $file1 = UploadedFile::fake()->image('test1.jpg', 600, 600)->size(500);

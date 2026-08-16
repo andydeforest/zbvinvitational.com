@@ -10,14 +10,16 @@
       </div>
       <div class="gallery-section__grid">
         <div>
-          <div v-for="(image, x) in images" :key="`image-thumb-${x}`" class="gallery-section__grid--item">
+          <div v-for="(image, x) in images" :key="`image-thumb-${image.id}`" class="gallery-section__grid--item">
             <DeferredContent>
               <div v-if="!loadedThumbs.includes(image.thumb)" class="skeleton-wrapper">
                 <Skeleton width="100%" height="0" style="padding-bottom: 66.66%" />
               </div>
               <img
                 :src="image.thumb"
-                loading="lazy"
+                :loading="x < 4 ? 'eager' : 'lazy'"
+                decoding="async"
+                :fetchpriority="x < 4 ? 'high' : 'auto'"
                 @load="onThumbLoad(image.thumb)"
                 @click="openLightbox(x)"
                 class="gallery-section__grid--image"
@@ -27,6 +29,16 @@
             </DeferredContent>
           </div>
         </div>
+      </div>
+      <div v-if="hasMoreImages" class="gallery-section__load-more">
+        <button
+          class="button is-primary"
+          :class="{ 'is-loading': loading }"
+          :disabled="loading"
+          @click="loadMoreImages"
+        >
+          Load more
+        </button>
       </div>
     </div>
     <Galleria
@@ -50,19 +62,28 @@
   import { ref, computed, watchEffect } from 'vue';
   import { usePage, router } from '@inertiajs/vue3';
   import type { PageProps } from '@inertiajs/core';
+  import axios from 'axios';
   import DeferredContent from 'primevue/deferredcontent';
   import Skeleton from 'primevue/skeleton';
   import Galleria from 'primevue/galleria';
 
   interface ImageEntry {
+    id: number;
     full: string;
     thumb: string;
     alt?: string;
   }
+  interface GalleryPagination {
+    current_page: number;
+    next_page: number | null;
+    has_more: boolean;
+    total: number;
+  }
   interface GalleryPageProps extends PageProps {
     years: string[];
-    images: ImageEntry[]; // now an array of objects
+    images: ImageEntry[];
     activeYear: string;
+    galleryPagination: GalleryPagination;
   }
 
   const page = usePage<GalleryPageProps>();
@@ -72,6 +93,12 @@
   const images = ref<ImageEntry[]>([]);
   const loadedThumbs = ref<string[]>([]);
   const loading = ref<boolean>(false);
+  const pagination = ref<GalleryPagination>({
+    current_page: 1,
+    next_page: null,
+    has_more: false,
+    total: 0
+  });
 
   const displayLightbox = ref(false);
   const activeIndex = ref(0);
@@ -89,7 +116,10 @@
     images.value = page.props.images;
     loadedThumbs.value = [];
     selectedYear.value = page.props.activeYear;
+    pagination.value = page.props.galleryPagination;
   });
+
+  const hasMoreImages = computed(() => pagination.value.has_more && pagination.value.next_page !== null);
 
   function changeYear() {
     loading.value = true;
@@ -115,6 +145,31 @@
   function openLightbox(index: number) {
     activeIndex.value = index;
     displayLightbox.value = true;
+  }
+
+  async function loadMoreImages() {
+    if (!hasMoreImages.value || loading.value) return;
+
+    loading.value = true;
+
+    try {
+      const response = await axios.get<GalleryPagination & { data: ImageEntry[] }>('/api/gallery', {
+        params: {
+          year: selectedYear.value,
+          page: pagination.value.next_page
+        }
+      });
+
+      images.value = [...images.value, ...response.data.data];
+      pagination.value = {
+        current_page: response.data.current_page,
+        next_page: response.data.next_page,
+        has_more: response.data.has_more,
+        total: response.data.total
+      };
+    } finally {
+      loading.value = false;
+    }
   }
 </script>
 
@@ -178,6 +233,12 @@
           opacity: 1;
         }
       }
+    }
+
+    &__load-more {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
     }
   }
 </style>
