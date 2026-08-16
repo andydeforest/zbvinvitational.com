@@ -76,22 +76,46 @@ html {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition:
-    opacity 500ms cubic-bezier(.4, 0, .2, 1),
-    transform 500ms cubic-bezier(.4, 0, .2, 1);
-  will-change: opacity, transform;
+    transition:
+        opacity 500ms cubic-bezier(0.4, 0, 0.2, 1),
+        transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, transform;
 }
 
 /* start hidden & slightly offset */
 .fade-enter-from,
 .fade-leave-from {
-  opacity: 0;
-  transform: translateY(10px);
+    opacity: 0;
+    transform: translateY(10px);
 }
 
 /* end fully visible & back in place */
 .fade-enter-to,
 .fade-leave-to {
-  opacity: 1;
-  transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.page-transition-frame {
+    position: relative;
+
+    .page-transition-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 20;
+        pointer-events: none;
+        background-color: #fff;
+        opacity: 0;
+        transition: opacity 180ms ease-in-out;
+    }
+
+    .page-transition-overlay.is-active {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-transition-frame .page-transition-overlay {
+        transition: none;
+    }
 }

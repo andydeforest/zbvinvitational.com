@@ -2,7 +2,9 @@
   <div>
     <NavMenu />
     <main>
-      <slot />
+      <BasePageTransition>
+        <slot />
+      </BasePageTransition>
     </main>
     <BaseFooter />
     <BaseHideOn :pages="['/shop/checkout']">
