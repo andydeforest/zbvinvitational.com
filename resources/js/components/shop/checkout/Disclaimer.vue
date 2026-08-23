@@ -2,8 +2,8 @@
   <div class="shop-checkout-disclaimer has-background-white-ter">
     <p>
       In consideration of any persons accepting this agreement (the "Participant") being allowed to participate in any
-      way in the ZEKE BONDY-VILLA INVITATIONAL GOLF TOURNAMENT on September 28, 2024 (the "Tournament"), and its related
-      events and activities, the undersigned Participant acknowledges, understands, and agrees that:
+      way in the ZEKE BONDY-VILLA INVITATIONAL GOLF TOURNAMENT on {{ formattedEventDate }} (the "Tournament"), and its
+      related events and activities, the undersigned Participant acknowledges, understands, and agrees that:
     </p>
     <p>
       1. Participation in the Tournament is completely voluntary. The Participant agrees to comply with the stated and
@@ -48,6 +48,12 @@
     </p>
   </div>
 </template>
+
+<script setup lang="ts">
+  import { useEventInfo } from '@/composables/useEventInfo';
+
+  const { formattedEventDate } = useEventInfo('LLLL dd, yyyy');
+</script>
 
 <style lang="scss">
   .shop-checkout-disclaimer {
