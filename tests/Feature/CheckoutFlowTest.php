@@ -5,13 +5,37 @@ namespace Tests\Feature;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Services\StripeGateway;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
+use Stripe\PaymentIntent;
 use Tests\TestCase;
 
 class CheckoutFlowTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        config(['services.stripe.secret' => 'sk_test_checkout']);
+
+        $fakeIntent = PaymentIntent::constructFrom([
+            'id' => 'pi_checkout_test',
+            'client_secret' => 'secret_checkout_test',
+        ], config('services.stripe.secret'));
+
+        $gatewayMock = $this->getMockBuilder(StripeGateway::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['createPaymentIntent', 'updatePaymentIntent'])
+            ->getMock();
+
+        $gatewayMock->method('createPaymentIntent')->willReturn($fakeIntent);
+        $gatewayMock->method('updatePaymentIntent')->willReturn($fakeIntent);
+
+        $this->app->instance(StripeGateway::class, $gatewayMock);
+    }
 
     private array $validBilling = [
         'firstName' => 'Alice',

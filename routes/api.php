@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/payment-intent', [StripeController::class, 'create']);
 Route::get('orders/{order}', [OrderController::class, 'show']);
 Route::delete('orders/{order}', [OrderController::class, 'destroy']);
+Route::get('gallery', [GalleryController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('contact', [ContactController::class, 'index']);

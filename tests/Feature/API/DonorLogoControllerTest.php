@@ -62,6 +62,11 @@ class DonorLogoControllerTest extends TestCase
                 "Expected a media record in the 'donors' collection for DonorLogo ID {$logo->id}"
             );
 
+            $this->assertStringContainsString(
+                "donor-logos/{$media->id}/",
+                $media->getPathRelativeToRoot()
+            );
+
             Storage::disk($disk)
                 ->assertExists($media->getPathRelativeToRoot());
         }

@@ -6,7 +6,7 @@ return [
      * The disk on which to store added files and derived images by default. Choose
      * one or more of the disks you've configured in config/filesystems.php.
      */
-    'disk_name' => env('MEDIA_DISK', 'public'),
+    'disk_name' => env('MEDIA_DISK') ?: (env('AWS_BUCKET') ? 's3' : 'public'),
 
     /*
      * The maximum file size of an item in bytes.
@@ -176,7 +176,7 @@ return [
      * The path where to store temporary files while performing image conversions.
      * If set to null, storage_path('media-library/temp') will be used.
      */
-    'temporary_directory_path' => null,
+    'temporary_directory_path' => env('MEDIA_TEMP_DIRECTORY', storage_path('app/media-library/temp')),
 
     /*
      * The engine that should perform the image conversions.

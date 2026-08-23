@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { loadStripe, Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
+import axios from 'axios';
 
 export function useStripePayment(cartItems: any[], billingDetails: any, checkoutMetadata: Ref<any[]>) {
   const stripe = ref<Stripe | null>(null);
@@ -14,14 +15,11 @@ export function useStripePayment(cartItems: any[], billingDetails: any, checkout
   const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
   async function fetchPaymentIntent() {
-    const res = await fetch('/api/payment-intent', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cart: cartItems, billing: billingDetails, metadata: checkoutMetadata.value })
+    const { data } = await axios.post('/api/payment-intent', {
+      cart: cartItems,
+      billing: billingDetails,
+      metadata: checkoutMetadata.value
     });
-    if (!res.ok) throw new Error(res.statusText);
-
-    const data = await res.json();
 
     clientSecret.value = data.clientSecret;
     orderId.value = data.orderId;

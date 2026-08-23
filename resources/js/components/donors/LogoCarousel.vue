@@ -3,13 +3,13 @@
     <div v-if="imageUrls.length > 6" class="donors-logo-carousel__dynamic">
       <swiper-container class="donor-logo-carousel" init="false">
         <swiper-slide v-for="(url, i) in imageUrls" :key="`donor-logo-${i}`" class="donors-logo-carousel__slide">
-          <img :src="url" :alt="`Donor logo ${i + 1}`" />
+          <img :src="url" :alt="`Donor logo ${i + 1}`" loading="lazy" decoding="async" />
         </swiper-slide>
       </swiper-container>
     </div>
     <div v-else class="donors-logo-carousel__static">
       <div v-for="(url, i) in imageUrls" :key="`donor-logo-${i}`">
-        <img :src="url" :alt="`Donor logo ${i + 1}`" />
+        <img :src="url" :alt="`Donor logo ${i + 1}`" loading="lazy" decoding="async" />
       </div>
     </div>
   </div>

@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * @mixin \App\Models\Assets\DonorLogo
@@ -24,8 +26,20 @@ class DonorLogoResource extends JsonResource
                 'uuid' => $media->uuid,
                 'file_name' => $media->file_name,
                 'mime_type' => $media->mime_type,
-                'original_url' => $media->getFullUrl(),
+                'original_url' => $this->resolveOriginalUrl($media),
             ] : null,
         ];
+    }
+
+    protected function resolveOriginalUrl(Media $media): string
+    {
+        $disk = Storage::disk($media->disk);
+        $legacyPath = "donor-logos/{$media->file_name}";
+
+        if ($disk->exists($legacyPath)) {
+            return $disk->url($legacyPath);
+        }
+
+        return $media->getFullUrl();
     }
 }

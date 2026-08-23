@@ -2,6 +2,7 @@
 
 namespace App\Models\Assets;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -15,6 +16,11 @@ class Photo extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
     protected $fillable = ['year'];
+
+    public function scopeWithAttachedMedia(Builder $query): Builder
+    {
+        return $query->whereHas('media');
+    }
 
     protected static function booted(): void
     {
@@ -56,6 +62,7 @@ class Photo extends Model implements HasMedia
     {
         /** @var Collection<int,int> $yearsRaw */
         $yearsRaw = static::query()
+            ->withAttachedMedia()
             ->select('year')
             ->distinct()
             ->orderByDesc('year')
@@ -74,6 +81,7 @@ class Photo extends Model implements HasMedia
     public static function imagesForYear(string $year): Collection
     {
         return static::query()
+            ->withAttachedMedia()
             ->where('year', intval($year))
             ->get()
             ->map(fn (Photo $photo): array => [

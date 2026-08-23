@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\DonorLogoResource;
 use App\Models\Assets\DonorLogo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
@@ -43,5 +44,27 @@ class DonorsPageTest extends TestCase
         );
 
         $this->assertDatabaseHas('donor_logos', ['id' => $logoWithoutMedia->id]);
+    }
+
+    #[Test]
+    public function donor_logo_resource_uses_legacy_flat_path_when_that_object_exists()
+    {
+        $logo = DonorLogo::factory()->create();
+        $logo->addMediaFromString('logo-content')
+            ->usingFileName('legacy-logo.png')
+            ->toMediaCollection('donors');
+
+        $media = $logo->getFirstMedia('donors');
+
+        $this->assertNotNull($media);
+
+        $currentPath = $media->getPathRelativeToRoot();
+        $legacyPath = "donor-logos/{$media->file_name}";
+
+        Storage::disk($this->mediaDisk)->move($currentPath, $legacyPath);
+
+        $payload = DonorLogoResource::make($logo->fresh())->resolve();
+
+        $this->assertStringEndsWith($legacyPath, $payload['media']['original_url']);
     }
 }

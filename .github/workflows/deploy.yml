@@ -196,6 +196,10 @@ jobs:
               echo "STRIPE_SECRET=${{ secrets.STRIPE_SECRET_DEV }}"                     >> .env
               echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_DEV }}"     >> .env
 
+              mkdir -p storage/app/media-library/temp
+              mkdir -p storage/logs
+              mkdir -p bootstrap/cache
+
               sudo chown -R deploy:www-data storage bootstrap/cache
               sudo find storage -type d -exec chmod 775 {} \;
               sudo find storage -type f -exec chmod 664 {} \;
@@ -266,6 +270,17 @@ jobs:
 
               echo "STRIPE_SECRET=${{ secrets.STRIPE_SECRET_PROD }}"                     >> .env
               echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}"     >> .env
+
+              mkdir -p storage/app/media-library/temp
+              mkdir -p storage/logs
+              mkdir -p bootstrap/cache
+
+              sudo chown -R deploy:www-data storage bootstrap/cache
+              sudo find storage -type d -exec chmod 775 {} \;
+              sudo find storage -type f -exec chmod 664 {} \;
+
+              sudo find bootstrap/cache -type d -exec chmod 775 {} \;
+              sudo find bootstrap/cache -type f -exec chmod 664 {} \;
 
               composer install --no-dev --optimize-autoloader --no-interaction
               php artisan migrate --env=production --force

@@ -11,7 +11,9 @@ class GalleryController extends Controller
 {
     public function index(Request $request)
     {
-        $photos = Photo::with('media')->get();
+        $photos = Photo::withAttachedMedia()
+            ->with('media')
+            ->get();
 
         return Inertia::render('Admin/Gallery/Index', [
             'photos' => $photos,

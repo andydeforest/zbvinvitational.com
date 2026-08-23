@@ -7,13 +7,17 @@ use Spatie\MediaLibrary\Support\PathGenerator\PathGenerator;
 
 class DonorLogoPathGenerator implements PathGenerator
 {
+    protected function basePath(Media $media): string
+    {
+        return "donor-logos/{$media->getKey()}/";
+    }
+
     /**
      * Get the path for the given media, relative to the root storage path.
      */
     public function getPath(Media $media): string
     {
-        // everything goes into `donor-logos/`
-        return 'donor-logos/';
+        return $this->basePath($media);
     }
 
     /**
@@ -21,7 +25,7 @@ class DonorLogoPathGenerator implements PathGenerator
      */
     public function getPathForConversions(Media $media): string
     {
-        return 'donor-logos/conversions/';
+        return $this->basePath($media).'conversions/';
     }
 
     /**
@@ -30,6 +34,6 @@ class DonorLogoPathGenerator implements PathGenerator
      */
     public function getPathForResponsiveImages(Media $media): string
     {
-        return 'donor-logos/responsive/';
+        return $this->basePath($media).'responsive/';
     }
 }
