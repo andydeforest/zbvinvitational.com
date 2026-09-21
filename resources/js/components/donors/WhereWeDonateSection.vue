@@ -36,6 +36,6 @@
     '/images/donors/our-donations/trevor-project.png',
     '/images/donors/our-donations/union-gospel-mission.png',
     '/images/donors/our-donations/vacaville-christmas-wish.jpg',
-    '/images/donors/our-donations/assistance-league.png',
+    '/images/donors/our-donations/assistance-league.png'
   ];
 </script>

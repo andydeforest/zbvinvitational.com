@@ -1,5 +1,5 @@
 <template>
-  <div ref="carouselRoot" class="donors-logo-carousel">
+  <div ref="carouselRoot" class="donors-logo-carousel mb-4">
     <div v-if="imageUrls.length > 6" class="donors-logo-carousel__dynamic">
       <swiper-container class="donor-logo-carousel" init="false">
         <swiper-slide v-for="(url, i) in imageUrls" :key="`donor-logo-${i}`" class="donors-logo-carousel__slide">
